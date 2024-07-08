@@ -1,15 +1,14 @@
 import "./App.css";
+import Login from "./pages/login/Login";
 import Footer from "./components/shared/Footer";
 import Header from "./components/shared/Header";
-import TablaAdmin from "./components/TablaAdmin/TablaAdmin";
 
 function App() {
   return (
     <>
       <Header />
-      <hr />
+      <Login />
       <Footer />
-      <TablaAdmin />
     </>
   );
 }
