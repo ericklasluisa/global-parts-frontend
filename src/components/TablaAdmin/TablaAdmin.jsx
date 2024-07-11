@@ -1,70 +1,144 @@
 import { useState, useEffect } from "react";
+import { FaFilter } from "react-icons/fa6";
+
+function Filtro({ mes, anio, setMes, setAnio, setRuta}) {
+  const fechaActual = new Date();
+  const mesActual = fechaActual.getMonth() + 1;
+  const anioActual = fechaActual.getFullYear();
+
+  const cambioFecha = (e) => {
+    const [year, month] = e.target.value.split("-");
+    if((parseInt(year) == anioActual && parseInt(month) > mesActual) || parseInt(year) > anioActual){
+      setMes(mesActual);
+      setAnio(anioActual);
+      window.alert("Elija una fecha menor a la actual")
+    } else{
+      setMes(parseInt(month));
+      setAnio(parseInt(year));
+    }
+  };
+
+  return (
+    <div className="flex shadow-sm mx-auto bg-global-principal m-4 rounded-lg items-center border-gray-200 border w-3/4">
+      <section className="px-4 py-3 bg-global-principal
+          text-sm text-white font-medium
+          rounded-s-lg">
+        <FaFilter />
+      </section>
+      <input name="mes" type="month" value={`${anio}-${mes.toString().padStart(2, "0")}`}
+        className="calendario px-4 py-3 bg-global-principal flex-1
+        text-sm text-white font-medium
+        border-gray-200 border-l border-r
+        hover:bg-[#464769]
+        focus:z-10 focus:ring-2 focus:ring-white"
+        onChange={cambioFecha} />
+      <select name="ruta" id="ruta"
+        className="calendario px-4 py-3 bg-global-principal flex-1
+        text-sm text-white font-medium
+        rounded-e-lg
+        hover:bg-[#464769]
+        focus:z-10 focus:ring-2 focus:ring-white"
+        onChange={(e) => setRuta(e.target.value)}>
+          <option value="*" selected>Todos</option>
+          <option value="A">Ruta A</option>
+          <option value="B">Ruta B</option>
+          <option value="C">Ruta C</option>
+      </select>
+    </div>
+  )
+}
+
+function Tabla({ mes, anio }) {
+  const [dias, setDias] = useState([]);
+
+  useEffect(() => {
+    var numDias = new Date(anio, mes, 0).getDate();
+    const diasSemana = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+    var diasTemp = [];
+    for (let i = 1; i <= numDias; i++) {
+      var indice = new Date(anio, mes - 1, i).getDay();
+      diasTemp.push(diasSemana[indice]);
+    }
+    setDias(diasTemp);
+  }, [mes, anio]);
+
+  const numColumnas = 4 + dias.length + 2; // Columnas fijas + columnas de días + columnas 'sticky' al inicio y al final
+
+  return (
+    <div className="overflow-x-auto shadow-md rounded-lg mx-auto w-11/12">
+      <table className="w-auto text-sm text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase">
+          <tr className="border-b border-gray-200">
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0">Cont</th>
+            <th className="px-6 py-3">Principal</th>
+            <th className="px-6 py-3 bg-gray-50">Transversal</th>
+            <th className="px-6 py-3">Sector</th>
+            {dias.map((dia, index) => (
+              <th key={index} className={`px-6 py-3 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                {index + 1} {dia}
+              </th>
+            ))}
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky right-0">Prom Mes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-b border-gray-200 bg-gray-500">
+            <td className="px-6 py-4 font-medium text-gray-100 text-left sticky left-0">A</td>
+            <td colSpan={numColumnas - 1} className="px-6 py-4"></td>
+          </tr>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <tr key={i} className="border-b border-gray-200">
+              <td className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
+              <td className="px-6 py-4">{i}</td>
+              <td className="px-6 py-4 bg-gray-50">{i}</td>
+              <td className="px-6 py-4">{i}</td>
+              {dias.map((dia, index) => (
+                <td key={index} className={`px-6 py-4 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                  {i}
+                </td>
+              ))}
+              <td className="px-6 py-4 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
+            </tr>
+          ))}
+          <tr className="border-b border-gray-200 bg-gray-500">
+            <td className="px-6 py-4 font-medium text-gray-100 text-left sticky left-0">B</td>
+            <td colSpan={numColumnas - 1} className="px-6 py-4"></td>
+          </tr>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <tr key={i} className="border-b border-gray-200">
+              <td className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
+              <td className="px-6 py-4">{i}</td>
+              <td className="px-6 py-4 bg-gray-50">{i}</td>
+              <td className="px-6 py-4">{i}</td>
+              {dias.map((dia, index) => (
+                <td key={index} className={`px-6 py-4 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                  {i}
+                </td>
+              ))}
+              <td className="px-6 py-4 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export default function TablaAdmin() {
-  const [dias, setDias] = useState([]);
   const [mes, setMes] = useState([]);
   const [anio, setAnio] = useState([]);
+  const [ruta, setRuta] = useState("*");
+
   useEffect(() => {
     const fecha = new Date();
     setMes(fecha.getMonth() + 1);
     setAnio(fecha.getFullYear());
-    var numDias = new Date(anio, mes, 0).getDate()
-    const diasSemana = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
-    var diasTemp = []; 
-    for (let i = 1; i <= numDias; i++) {
-      var indice = new Date(anio, mes - 1, i).getDay();
-      diasTemp.push(diasSemana[indice]);
-      setDias(diasTemp);
-    }
   }, []);
 
-  return(
-  <div className="overflow-x-auto w-10/12 m-auto">
-    <table className="table-auto border-collapse border border-neutral-500">
-      <thead>
-        <tr>
-          <th className="bg-neutral-400 border border-neutral-500">Cont</th>
-          <th className="bg-neutral-400 border border-neutral-500">Principal</th>
-          <th className="bg-neutral-400 border border-neutral-500">Transversal</th>
-          <th className="bg-neutral-400 border border-neutral-500">Sector</th>
-          {dias.map((dia, index) => (
-            <th key={index} className="bg-neutral-400 border border-neutral-500">{index + 1} {dia}</th>
-          ))}
-          <th className="bg-neutral-400 border-neutral-500 sticky right-0">Prom Mes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td className="border border-neutral-500">1</td>
-          <td className="border border-neutral-500">1</td>
-          <td className="border border-neutral-500">1</td>
-          <td className="border border-neutral-500">1</td>
-          {dias.map((dia, index) => (
-            <td key={index} className="border border-neutral-500">1</td>
-          ))}
-          <td className="bg-white border border-neutral-500 sticky right-0">1</td>
-        </tr>
-        <tr>
-          <td className="border border-neutral-500">2</td>
-          <td className="border border-neutral-500">2</td>
-          <td className="border border-neutral-500">2</td>
-          <td className="border border-neutral-500">2</td>
-          {dias.map((dia, index) => (
-            <td key={index} className="border border-neutral-500">2</td>
-          ))}
-          <td className="bg-white border border-neutral-500 sticky right-0">2</td>
-        </tr>
-        <tr>
-          <td className="border border-neutral-500">3</td>
-          <td className="border border-neutral-500">3</td>
-          <td className="border border-neutral-500">3</td>
-          <td className="border border-neutral-500">3</td>
-          {dias.map((dia, index) => (
-            <td key={index} className="border border-neutral-500">3</td>
-          ))}
-          <td className="bg-white border border-neutral-500 sticky right-0">3</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>);
+  return (
+    <>
+      <Filtro mes={mes} anio={anio} setMes={setMes} setAnio={setAnio} setRuta={setRuta}/>
+      <Tabla mes={mes} anio={anio} />
+    </>
+  );
 }
