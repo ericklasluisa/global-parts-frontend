@@ -12,7 +12,7 @@ function App() {
       <Header />
       {/* <Login /> */}
       {/* <IniciarRuta /> */}
-      <FinalizarViaje />
+      {/* <FinalizarViaje /> */}
       {/* <FinalizarRuta /> */}
       <Footer />
     </>

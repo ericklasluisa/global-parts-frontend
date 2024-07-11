@@ -10,6 +10,15 @@ export default function Login() {
   const [passwordValue, setPasswordValue] = useState("");
   const [auth, setAuth] = useState(true);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (userIsValid && passwordIsValid) {
+      setAuth(true);
+    } else {
+      setAuth(false);
+    }
+  }
+
   const validateUserInput = (event) => {
     const regex =
       /^(?:\d{10,15}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -33,7 +42,7 @@ export default function Login() {
 
   return (
     <>
-      <NavMenu />
+      {/* <NavMenu /> */}
       <div className="mx-7">
         <h2 className="text-center text-global-principal text-3xl font-bold">
           Iniciar Sesión
@@ -123,7 +132,7 @@ export default function Login() {
           <button
             className="bg-global-principal/90 text-white font-bold text-lg rounded-lg py-3 mt-10 active:bg-[#1A365D]"
             type="submit"
-            onClick={(e) => e.preventDefault()}
+            onClick={handleSubmit}
           >
             Iniciar Sesión
           </button>
