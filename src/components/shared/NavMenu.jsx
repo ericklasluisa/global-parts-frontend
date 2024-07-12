@@ -1,33 +1,41 @@
 /* eslint-disable react/prop-types */
 import { FaUserCircle } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const paginas = [
   {
     text: "Iniciar Ruta",
-    href: "/",
+    path: "/iniciar-ruta",
   },
   {
     text: "Registro en Ruta",
-    href: "/",
+    path: "/ruta",
   },
   {
     text: "Finalizar Viaje",
-    href: "/",
+    path: "/finalizar-viaje",
   },
   {
     text: "Finalizar Ruta",
-    href: "/",
+    path: "/finalizar-ruta",
   },
 ];
 
-function ListItem({ text, href, setIsOpen }) {
+function ListItem({ text, path, setIsOpen }) {
   return (
-    <li
-      className="text-2xl font-medium cursor-pointer hover:text-blue-400"
-      onClick={() => setIsOpen(false)}
-    >
-      <p href={href}>{text}</p>
-    </li>
+    <>
+      <li
+        className="text-2xl font-medium cursor-pointer hover:text-blue-400"
+        onClick={() => setIsOpen(false)}
+      >
+        <NavLink
+          className={({ isActive }) => (isActive ? "active-link" : null)}
+          to={path}
+        >
+          {text}
+        </NavLink>
+      </li>
+    </>
   );
 }
 
@@ -53,7 +61,7 @@ function NavMenu({ isOpen, setIsOpen }) {
               <ListItem
                 key={pagina.text}
                 text={pagina.text}
-                href={pagina.href}
+                path={pagina.path}
                 setIsOpen={setIsOpen}
               />
             ))}

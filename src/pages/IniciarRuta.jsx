@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const initialForm = {
   kmInicio: "",
@@ -15,6 +16,8 @@ const initialErrors = {
 function IniciarRuta() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState(initialErrors);
+
+  const navigate = useNavigate();
 
   const vehiculosBD = [
     {
@@ -84,6 +87,7 @@ function IniciarRuta() {
       // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
       console.log(form);
       setForm(initialForm);
+      navigate("/ruta");
     }
   };
 
@@ -125,7 +129,7 @@ function IniciarRuta() {
             name="vehiculo"
             id="vehiculo"
             onChange={handleChange}
-            defaultValue=""
+            value={form.vehiculo}
           >
             <option value="" disabled>
               Selecciona un vehículo
@@ -149,7 +153,7 @@ function IniciarRuta() {
             ${errors.ruta ? "ring ring-red-500" : ""}`}
             name="ruta"
             onChange={handleChange}
-            defaultValue=""
+            value={form.ruta}
           >
             <option value="" disabled>
               Selecciona una ruta

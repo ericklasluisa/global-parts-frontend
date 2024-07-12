@@ -3,7 +3,7 @@ import NavMenu from "./NavMenu";
 import { IoMenu } from "react-icons/io5";
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <header className="w-full flex flex-col">

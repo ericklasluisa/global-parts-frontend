@@ -1,12 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-
-const initialForm = {
-  numViaje: "",
-  tonelajeEntrada: "",
-  tonelajeSalida: "",
-  tonelajeViaje: "",
-  fotoTonelaje: "",
-};
+import { useNavigate } from "react-router-dom";
 
 const initialErrors = {
   numViaje: false,
@@ -15,9 +9,19 @@ const initialErrors = {
   fotoTonelaje: false,
 };
 
-function FinalizarViaje() {
+function FinalizarViaje({ viajes }) {
+  const initialForm = {
+    numViaje: viajes.length || 1,
+    tonelajeEntrada: "",
+    tonelajeSalida: "",
+    tonelajeViaje: "",
+    fotoTonelaje: "",
+  };
+
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState(initialErrors);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (form.tonelajeEntrada && form.tonelajeSalida) {
@@ -90,6 +94,7 @@ function FinalizarViaje() {
     if (validateForm()) {
       // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
       console.log(form);
+      navigate("/ruta");
       setForm(initialForm);
     }
   };
@@ -114,6 +119,23 @@ function FinalizarViaje() {
         Viajes
       </h2>
       <form className="flex flex-col gap-5">
+        <div className="flex flex-col">
+          <select
+            className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 w-1/3
+            ${errors.numViaje ? "ring ring-red-500" : ""}`}
+            name="numViaje"
+            id="numViaje"
+            onChange={handleChange}
+            value={form.numViaje}
+          >
+            {viajes.map((viaje) => (
+              <option key={viaje.numViaje} value={viaje.numViaje}>
+                Viaje {viaje.numViaje}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex flex-col">
           <label
             htmlFor="tonelajeEntrada"

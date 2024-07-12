@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import NavMenu from "../components/shared/NavMenu";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [userInput, setUserInput] = useState("");
@@ -10,14 +10,17 @@ export default function Login() {
   const [passwordValue, setPasswordValue] = useState("");
   const [auth, setAuth] = useState(true);
 
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (userIsValid && passwordIsValid) {
       setAuth(true);
+      navigate("/iniciar-ruta");
     } else {
       setAuth(false);
     }
-  }
+  };
 
   const validateUserInput = (event) => {
     const regex =
@@ -26,7 +29,9 @@ export default function Login() {
   };
 
   const validatePasswordInput = (event) => {
-    event.target.value === "" && setPasswordIsValid(false);
+    event.target.value === ""
+      ? setPasswordIsValid(false)
+      : setPasswordIsValid(true);
   };
 
   const handleInputChange = (event) => {
@@ -42,7 +47,6 @@ export default function Login() {
 
   return (
     <>
-      {/* <NavMenu /> */}
       <div className="mx-7">
         <h2 className="text-center text-global-principal text-3xl font-bold">
           Iniciar Sesión
