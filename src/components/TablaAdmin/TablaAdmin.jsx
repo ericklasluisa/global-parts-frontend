@@ -62,60 +62,62 @@ function Tabla({ mes, anio }) {
     setDias(diasTemp);
   }, [mes, anio]);
 
-  const numColumnas = 4 + dias.length + 2; // Columnas fijas + columnas de días + columnas 'sticky' al inicio y al final
+  const numColumnas = 4 + dias.length + 2;
 
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg mx-auto w-11/12">
+    <div className="overflow-x-auto shadow-md rounded-lg mx-auto w-11/12 overflow-y-auto h-96">
       <table className="w-auto text-sm text-gray-500">
         <thead className="text-xs text-gray-700 uppercase">
-          <tr className="border-b border-gray-200">
-            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0">Cont</th>
-            <th className="px-6 py-3">Principal</th>
-            <th className="px-6 py-3 bg-gray-50">Transversal</th>
-            <th className="px-6 py-3">Sector</th>
+          <tr className="border-b border-gray-200 sticky top-0 z-10">
+            <th className="px-6 py-3 max-lg:px-4 bg-gray-600 text-gray-100 sticky left-0 z-20">Cont</th>
+            <th className="px-6 py-3 max-lg:px-4 bg-white">Principal</th>
+            <th className="px-6 py-3 max-lg:px-4 bg-gray-50">Transversal</th>
+            <th className="px-6 py-3 max-lg:px-4 bg-white">Sector</th>
             {dias.map((dia, index) => (
-              <th key={index} className={`px-6 py-3 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
-                {index + 1} {dia}
+              <th key={index} className={`px-6 py-3 max-lg:px-4 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                {index + 1}
+                <br/>
+                {dia}
               </th>
             ))}
-            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky right-0">Prom Mes</th>
+            <th className="px-6 py-3 max-lg:px-4 bg-gray-600 text-gray-100 sticky right-0 z-20">Prom Mes</th>
           </tr>
         </thead>
         <tbody>
           <tr className="border-b border-gray-200 bg-gray-500">
-            <td className="px-6 py-4 font-medium text-gray-100 text-left sticky left-0">A</td>
-            <td colSpan={numColumnas - 1} className="px-6 py-4"></td>
+            <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">A</td>
+            <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
           </tr>
           {Array.from({ length: 10 }).map((_, i) => (
             <tr key={i} className="border-b border-gray-200">
-              <td className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
-              <td className="px-6 py-4">{i}</td>
-              <td className="px-6 py-4 bg-gray-50">{i}</td>
-              <td className="px-6 py-4">{i}</td>
+              <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
+              <td className="px-6 py-3">{i}</td>
+              <td className="px-6 py-3 bg-gray-50">{i}</td>
+              <td className="px-6 py-3">{i}</td>
               {dias.map((dia, index) => (
-                <td key={index} className={`px-6 py-4 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                <td key={index} className={`px-6 py-3 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
                   {i}
                 </td>
               ))}
-              <td className="px-6 py-4 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
+              <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
             </tr>
           ))}
           <tr className="border-b border-gray-200 bg-gray-500">
-            <td className="px-6 py-4 font-medium text-gray-100 text-left sticky left-0">B</td>
-            <td colSpan={numColumnas - 1} className="px-6 py-4"></td>
+            <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">B</td>
+            <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
           </tr>
           {Array.from({ length: 10 }).map((_, i) => (
             <tr key={i} className="border-b border-gray-200">
-              <td className="px-6 py-4 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
-              <td className="px-6 py-4">{i}</td>
-              <td className="px-6 py-4 bg-gray-50">{i}</td>
-              <td className="px-6 py-4">{i}</td>
+              <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">{i}</td>
+              <td className="px-6 py-3">{i}</td>
+              <td className="px-6 py-3 bg-gray-50">{i}</td>
+              <td className="px-6 py-3">{i}</td>
               {dias.map((dia, index) => (
-                <td key={index} className={`px-6 py-4 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
+                <td key={index} className={`px-6 py-3 ${index % 2 === 0 ? 'bg-gray-50' : ''}`}>
                   {i}
                 </td>
               ))}
-              <td className="px-6 py-4 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
+              <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">{i}</td>
             </tr>
           ))}
         </tbody>
