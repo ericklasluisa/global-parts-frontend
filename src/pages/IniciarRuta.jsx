@@ -92,15 +92,15 @@ function IniciarRuta() {
   };
 
   return (
-    <div className="mx-7">
-      <h2 className="text-center text-global-principal text-3xl font-bold mb-10">
+    <div className="m-7">
+      <h2 className="text-center text-global-principal text-3xl font-bold mb-10 sm:mb-5">
         Iniciar Ruta
       </h2>
-      <form className="flex flex-col gap-5">
+      <form className="flex flex-col gap-5 sm:w-1/2 sm:mx-auto sm:gap-2.5">
         <div className="flex flex-col">
           <label
             htmlFor="kmInicio"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Kilometraje Inicio
           </label>
@@ -119,7 +119,7 @@ function IniciarRuta() {
         <div className="flex flex-col">
           <label
             htmlFor="vehiculo"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Vehículo
           </label>
@@ -144,7 +144,7 @@ function IniciarRuta() {
         <div className="flex flex-col">
           <label
             htmlFor="ruta"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Ruta
           </label>
@@ -167,7 +167,7 @@ function IniciarRuta() {
         </div>
         <div className="flex flex-col">
           <button
-            className="bg-global-principal/90 text-white font-bold text-lg rounded-lg py-3 mt-10 active:bg-[#1A365D]"
+            className="bg-global-principal/90 text-white font-bold text-lg rounded-lg py-3 mt-10 active:bg-[#1A365D] sm:mt-5"
             type="submit"
             onClick={handleSubmit}
           >

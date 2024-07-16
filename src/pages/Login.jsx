@@ -47,7 +47,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="mx-7">
+      <div className="m-7">
         <h2 className="text-center text-global-principal text-3xl font-bold">
           Iniciar Sesión
         </h2>
@@ -56,11 +56,11 @@ export default function Login() {
           Ingrese sus credenciales para continuar
         </p>
 
-        <form className="flex flex-col">
+        <form className="flex flex-col sm:w-1/2 sm:mx-auto">
           <div className="flex flex-col">
             <label
               htmlFor="user"
-              className="text-global-principal/80 font-semibold text-lg"
+              className="text-global-principal/80 font-semibold text-lg sm:text-base"
             >
               Email / Número de teléfono
             </label>
@@ -85,7 +85,7 @@ export default function Login() {
           <div className="flex flex-col mt-6">
             <label
               htmlFor="password"
-              className="text-global-principal/80 font-semibold text-lg"
+              className="text-global-principal/80 font-semibold text-lg sm:text-base"
             >
               Contraseña
             </label>

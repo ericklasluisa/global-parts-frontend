@@ -114,11 +114,11 @@ function FinalizarViaje({ viajes }) {
   };
 
   return (
-    <div className="mx-7">
-      <h2 className="text-center text-global-principal text-3xl font-bold mb-10">
+    <div className="m-7">
+      <h2 className="text-center text-global-principal text-3xl font-bold mb-10 sm:mb-5">
         Viajes
       </h2>
-      <form className="flex flex-col gap-5">
+      <form className="flex flex-col gap-5 sm:w-1/2 sm:mx-auto sm:gap-3">
         <div className="flex flex-col">
           <select
             className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 w-1/3
@@ -139,7 +139,7 @@ function FinalizarViaje({ viajes }) {
         <div className="flex flex-col">
           <label
             htmlFor="tonelajeEntrada"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Tonelaje Entrada
           </label>
@@ -157,7 +157,7 @@ function FinalizarViaje({ viajes }) {
         <div className="flex flex-col">
           <label
             htmlFor="tonelajeSalida"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Tonelaje Salida
           </label>
@@ -175,7 +175,7 @@ function FinalizarViaje({ viajes }) {
         <div className="flex flex-col">
           <label
             htmlFor="tonelajeViaje"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Tonelaje Viaje
           </label>
@@ -192,7 +192,7 @@ function FinalizarViaje({ viajes }) {
         <div className="flex flex-col">
           <label
             htmlFor="fotoTonelaje"
-            className="text-global-principal/80 font-semibold text-lg"
+            className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Foto Tonelaje
           </label>
@@ -207,7 +207,7 @@ function FinalizarViaje({ viajes }) {
 
         <div className="flex flex-col">
           <button
-            className="bg-global-principal/90 text-white font-bold text-lg rounded-lg py-3 mt-10 active:bg-[#1A365D]"
+            className="bg-global-principal/90 text-white font-bold text-lg rounded-lg py-3 mt-10 active:bg-[#1A365D] sm:mt-5"
             type="submit"
             onClick={handleSubmit}
           >
