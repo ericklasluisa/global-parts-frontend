@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa6";
+import { FaSearch } from "react-icons/fa";
 
 function Filtro({ mes, anio, setMes, setAnio, setRuta}) {
   const fechaActual = new Date();
@@ -19,32 +20,46 @@ function Filtro({ mes, anio, setMes, setAnio, setRuta}) {
   };
 
   return (
-    <div className="flex shadow-sm mx-auto bg-global-principal m-4 rounded-lg items-center border-gray-200 border w-3/4">
-      <section className="px-4 py-3 bg-global-principal
+    <>
+      <div className="flex shadow-sm mx-auto bg-global-principal m-4 rounded-lg items-center border-gray-200 border w-full">
+        <section className="px-4 py-3 bg-global-principal
+            text-sm text-white font-medium
+            rounded-s-lg">
+          <FaFilter />
+        </section>
+        <input name="mes" type="month" value={`${anio}-${mes.toString().padStart(2, "0")}`}
+          className="calendario px-4 py-3 bg-global-principal flex-1
           text-sm text-white font-medium
-          rounded-s-lg">
-        <FaFilter />
-      </section>
-      <input name="mes" type="month" value={`${anio}-${mes.toString().padStart(2, "0")}`}
-        className="calendario px-4 py-3 bg-global-principal flex-1
-        text-sm text-white font-medium
-        border-gray-200 border-l border-r
-        hover:bg-[#464769]
-        focus:z-10 focus:ring-2 focus:ring-white"
-        onChange={cambioFecha} />
-      <select name="ruta" id="ruta"
-        className="calendario px-4 py-3 bg-global-principal flex-1
-        text-sm text-white font-medium
-        rounded-e-lg
-        hover:bg-[#464769]
-        focus:z-10 focus:ring-2 focus:ring-white"
-        onChange={(e) => setRuta(e.target.value)}>
-          <option value="*" selected>Todos</option>
-          <option value="A">Ruta A</option>
-          <option value="B">Ruta B</option>
-          <option value="C">Ruta C</option>
-      </select>
-    </div>
+          border-gray-200 border-l border-r
+          hover:bg-[#464769]
+          focus:z-10 focus:ring-2 focus:ring-white"
+          onChange={cambioFecha} />
+        <select name="ruta" id="ruta"
+          className="calendario px-4 py-3 bg-global-principal flex-1
+          text-sm text-white font-medium
+          rounded-e-lg
+          hover:bg-[#464769]
+          focus:z-10 focus:ring-2 focus:ring-white"
+          onChange={(e) => setRuta(e.target.value)}>
+            <option value="*" selected>Todos</option>
+            <option value="A">Ruta A</option>
+            <option value="B">Ruta B</option>
+            <option value="C">Ruta C</option>
+        </select>
+      </div>
+      <div className="flex shadow-sm bg-global-principal mb-4 mt-0 rounded-full border-gray-200 border w-1/4 max-lg:w-3/4 hover:bg-[#464769]">
+        <label htmlFor="codigo" className="px-4 py-4
+              text-sm text-white font-medium
+              rounded-s-full">
+            <FaSearch />
+        </label>
+        <input name="codigo" type="text" placeholder="Buscar código contenedor"
+            className="px-4 py-3 bg-transparent flex-1 w-1/4
+            text-sm text-white font-medium
+            rounded-e-full
+            focus:outline-none"/>
+      </div>
+    </>
   )
 }
 
@@ -65,22 +80,22 @@ function Tabla({ mes, anio }) {
   const numColumnas = 4 + dias.length + 2;
 
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg mx-auto w-11/12 overflow-y-auto h-96">
+    <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto flex-1">
       <table className="w-auto text-sm text-gray-500">
         <thead className="text-xs text-gray-700 uppercase">
           <tr className="border-b border-gray-200 sticky top-0 z-10">
-            <th className="px-6 py-3 max-lg:px-4 bg-gray-600 text-gray-100 sticky left-0 z-20">Cont</th>
-            <th className="px-6 py-3 max-lg:px-4 bg-white">Principal</th>
-            <th className="px-6 py-3 max-lg:px-4 bg-gray-50">Transversal</th>
-            <th className="px-6 py-3 max-lg:px-4 bg-white">Sector</th>
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0 z-20">Cont</th>
+            <th className="px-6 py-3 bg-white">Principal</th>
+            <th className="px-6 py-3 bg-gray-50">Transversal</th>
+            <th className="px-6 py-3 bg-white">Sector</th>
             {dias.map((dia, index) => (
-              <th key={index} className={`px-6 py-3 max-lg:px-4 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+              <th key={index} className={`px-6 py-3 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
                 {index + 1}
                 <br/>
                 {dia}
               </th>
             ))}
-            <th className="px-6 py-3 max-lg:px-4 bg-gray-600 text-gray-100 sticky right-0 z-20">Prom Mes</th>
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky right-0 z-20">Prom Mes</th>
           </tr>
         </thead>
         <tbody>
@@ -138,9 +153,9 @@ export default function TablaAdmin() {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col flex-1 w-11/12 mx-auto">
       <Filtro mes={mes} anio={anio} setMes={setMes} setAnio={setAnio} setRuta={setRuta}/>
       <Tabla mes={mes} anio={anio} />
-    </>
+    </div>
   );
 }
