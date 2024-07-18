@@ -4,6 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosLogOut } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const paginas = [
   {
@@ -32,7 +33,11 @@ function ListItem({ text, path, setIsOpen }) {
         onClick={() => setIsOpen(false)}
       >
         <NavLink
-          className={({ isActive }) => (isActive ? "active-link" : null)}
+          className={({ isActive }) =>
+            isActive
+              ? "border-b-2 border-solid border-blue-300 text-blue-300 px-5 py-1"
+              : "px-5 py-1"
+          }
           to={path}
         >
           {text}
@@ -45,6 +50,8 @@ function ListItem({ text, path, setIsOpen }) {
 function NavMenu({ isOpen, setIsOpen }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -71,8 +78,8 @@ function NavMenu({ isOpen, setIsOpen }) {
     <nav>
       <div
         className={`${
-          isOpen ? "block" : "hidden"
-        } absolute top-full left-0 w-full bg-global-principal z-50 md:hidden`}
+          isOpen ? "max-h-screen" : "max-h-0"
+        } absolute top-full left-0 w-full bg-global-principal z-50 md:hidden overflow-hidden transition-max-height duration-200 ease-in-out`}
       >
         <div className="font-medium flex flex-col gap-3 p-4 border rounded-b-lg bg-global-principal border-global-principal text-white items-center">
           <div className="flex flex-col items-center">
@@ -88,7 +95,8 @@ function NavMenu({ isOpen, setIsOpen }) {
                 onClick={() => {
                   // TODO: Lógica para cerrar sesión
                   console.log("Cerrar sesión");
-                  setIsDropdownOpen(false);
+                  setIsOpen(false);
+                  navigate("/");
                 }}
               >
                 Cerrar sesión
@@ -140,6 +148,7 @@ function NavMenu({ isOpen, setIsOpen }) {
                   // TODO: Lógica para cerrar sesión
                   console.log("Cerrar sesión");
                   setIsDropdownOpen(false);
+                  navigate("/");
                 }}
               >
                 Cerrar sesión

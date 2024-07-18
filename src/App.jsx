@@ -6,6 +6,7 @@ import IniciarRuta from "./pages/IniciarRuta";
 import FinalizarRuta from "./pages/FinalizarRuta";
 import FinalizarViaje from "./pages/FinalizarViaje";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import RegistroRuta from "./pages/RegistroRuta";
 
 const viajes = [
   {
@@ -45,6 +46,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/iniciar-ruta" element={<IniciarRuta />} />
+          <Route path="/ruta" element={<RegistroRuta />} />
           <Route path="/finalizar-viaje" element={<FinalizarViaje viajes={viajes}/>} />
           <Route path="/finalizar-ruta" element={<FinalizarRuta />} />
         </Routes>
