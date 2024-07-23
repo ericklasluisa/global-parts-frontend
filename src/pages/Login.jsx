@@ -16,6 +16,7 @@ export default function Login() {
     event.preventDefault();
     if (userIsValid && passwordIsValid) {
       setAuth(true);
+      //TODO: Add axios request to validate user credentials
       navigate("/iniciar-ruta");
     } else {
       setAuth(false);

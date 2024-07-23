@@ -7,11 +7,16 @@ function EjemploTablaMUI() {
   const [contenedores, setContenedores] = useState([]);
   const [openModalRegistrar, setOpenModalRegistrar] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+  //TODO: Obtener ID viaje y recolección
 
   useEffect(() => {
-    axios.get("http://localhost:3000/contenedores").then((response) => {
-      setContenedores(response.data);
-    });
+    axios
+      .get(
+        "http://localhost:8000/iniciarRuta/contenedores/ruta/registro/?id_recoleccion=2&id_viaje=2"
+      )
+      .then((response) => {
+        setContenedores(response.data);
+      });
   }, []);
 
   const handleUpdate = (index, updatedData) => {
@@ -75,8 +80,8 @@ function EjemploTablaMUI() {
   const data = contenedores;
   const columns = [
     {
-      name: "id",
-      label: "CONT.",
+      name: "id_contenedor",
+      label: "CONTENEDOR",
     },
     {
       name: "principal",
@@ -91,7 +96,7 @@ function EjemploTablaMUI() {
       label: "SECTOR",
     },
     {
-      name: "hora",
+      name: "hora_registro",
       label: "HORA",
     },
     {
@@ -108,7 +113,7 @@ function EjemploTablaMUI() {
       label: "NOVEDAD",
       options: {
         customBodyRender: (value) => {
-          return value ? "Con Observación" : "Sin Observación";
+          return value.id ? "Con Observación" : "Sin Observación";
         },
       },
     },
@@ -124,11 +129,11 @@ function EjemploTablaMUI() {
       />
       {selectedRowIndex !== null && (
         <ModalRegistrarContenedor
-          codigo={contenedores[selectedRowIndex].id}
+          codigo={contenedores[selectedRowIndex].id_contenedor}
           principal={contenedores[selectedRowIndex].principal}
           transversal={contenedores[selectedRowIndex].transversal}
           sector={contenedores[selectedRowIndex].sector}
-          hora={contenedores[selectedRowIndex].hora}
+          hora={contenedores[selectedRowIndex].hora_registro}
           porcentaje={contenedores[selectedRowIndex].porcentaje}
           novedad={contenedores[selectedRowIndex].novedad}
           openModalRegistrar={openModalRegistrar}
