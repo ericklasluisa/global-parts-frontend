@@ -80,7 +80,7 @@ function Tabla({ mes, anio }) {
   const numColumnas = 4 + dias.length + 2;
 
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto flex-1">
+    <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
       <table className="w-auto text-sm text-gray-500">
         <thead className="text-xs text-gray-700 uppercase">
           <tr className="border-b border-gray-200 sticky top-0 z-10">
@@ -153,7 +153,7 @@ export default function TablaAdmin() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-1 w-11/12 mx-auto">
+    <div className="flex flex-col h-0 flex-1 w-11/12 mx-auto">
       <Filtro mes={mes} anio={anio} setMes={setMes} setAnio={setAnio} setRuta={setRuta}/>
       <Tabla mes={mes} anio={anio} />
     </div>
