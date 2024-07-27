@@ -28,6 +28,7 @@ function IniciarRuta() {
       .then((response) => {
         setVehiculosDB(response.data);
       });
+
     axios
       .get("http://localhost:8000/iniciarRuta/rutas/id_nombre/")
       .then((response) => {
@@ -77,7 +78,7 @@ function IniciarRuta() {
         );
         console.log("Ruta iniciada con éxito:", response.data);
         setForm(initialForm);
-        navigate("/ruta");
+        navigate("/ruta", { state: response.data });
       } catch (error) {
         if (error.response) {
           console.error(

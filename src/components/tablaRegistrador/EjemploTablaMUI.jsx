@@ -1,23 +1,23 @@
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 import ModalRegistrarContenedor from "./ModalRegistrarContenedor";
 
-function EjemploTablaMUI() {
+function EjemploTablaMUI({ recoleccion }) {
   const [contenedores, setContenedores] = useState([]);
   const [openModalRegistrar, setOpenModalRegistrar] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
-  //TODO: Obtener ID viaje y recolección
 
   useEffect(() => {
     axios
       .get(
-        "http://localhost:8000/iniciarRuta/contenedores/ruta/registro/?id_recoleccion=2&id_viaje=2"
+        `http://localhost:8000/iniciarRuta/contenedores/ruta/registro/?id_recoleccion=${recoleccion.id_recoleccion}&id_viaje=${recoleccion.id_viaje}`
       )
       .then((response) => {
         setContenedores(response.data);
       });
-  }, []);
+  }, [recoleccion]);
 
   const handleUpdate = (index, updatedData) => {
     setContenedores((prevData) =>
@@ -81,7 +81,7 @@ function EjemploTablaMUI() {
   const columns = [
     {
       name: "id_contenedor",
-      label: "CONTENEDOR",
+      label: "CONT.",
     },
     {
       name: "principal",
@@ -109,11 +109,11 @@ function EjemploTablaMUI() {
       },
     },
     {
-      name: "novedad",
+      name: "novedades",
       label: "NOVEDAD",
       options: {
         customBodyRender: (value) => {
-          return value.id ? "Con Observación" : "Sin Observación";
+          return value.length > 0 ? "Con Observación" : "Sin Observación";
         },
       },
     },
@@ -130,12 +130,13 @@ function EjemploTablaMUI() {
       {selectedRowIndex !== null && (
         <ModalRegistrarContenedor
           codigo={contenedores[selectedRowIndex].id_contenedor}
+          id_viaje={recoleccion.id_viaje}
           principal={contenedores[selectedRowIndex].principal}
           transversal={contenedores[selectedRowIndex].transversal}
           sector={contenedores[selectedRowIndex].sector}
           hora={contenedores[selectedRowIndex].hora_registro}
           porcentaje={contenedores[selectedRowIndex].porcentaje}
-          novedad={contenedores[selectedRowIndex].novedad}
+          novedad={contenedores[selectedRowIndex].novedades}
           openModalRegistrar={openModalRegistrar}
           setOpenModalRegistrar={setOpenModalRegistrar}
           onUpdate={handleUpdate}
@@ -145,5 +146,9 @@ function EjemploTablaMUI() {
     </>
   );
 }
+
+EjemploTablaMUI.propTypes = {
+  recoleccion: PropTypes.object.isRequired,
+};
 
 export default EjemploTablaMUI;

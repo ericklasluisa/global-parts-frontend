@@ -9,7 +9,7 @@ import axios from "axios";
 const initialFormState = {
   hora_registro: "",
   porcentaje: "",
-  novedad: {},
+  novedades: [],
 };
 
 const initialErrors = {
@@ -18,6 +18,7 @@ const initialErrors = {
 
 function ModalRegistrarContenedor({
   codigo,
+  id_viaje,
   principal,
   transversal,
   sector,
@@ -47,7 +48,7 @@ function ModalRegistrarContenedor({
       setFormState({
         hora_registro: currentHour,
         porcentaje,
-        novedad,
+        novedades: novedad,
       });
       dialogRef.current.showModal();
     } else {
@@ -79,11 +80,17 @@ function ModalRegistrarContenedor({
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log({
+      id_viaje: id_viaje,
+      contenedor_id: codigo,
+      porcentaje: formState.porcentaje,
+    });
     if (validateForm()) {
       axios.post("http://localhost:8000/registros/upsertRegistro/", {
-        id_viaje: 2,
+        id_viaje: id_viaje,
         contenedor_id: codigo,
         porcentaje: formState.porcentaje,
+        novedades: formState.novedades,
       });
 
       onUpdate(rowIndex, formState);
@@ -93,14 +100,10 @@ function ModalRegistrarContenedor({
   };
 
   const handleNovedadSubmit = (novedadModal) => {
-    const novedad = {
-      id: novedadModal.id,
-      nombre: novedadModal.nombre,
-      file: novedadModal.file,
-    };
+    const novedades = novedadModal;
     setFormState((prevState) => ({
       ...prevState,
-      novedad,
+      novedades,
     }));
   };
 
@@ -123,10 +126,10 @@ function ModalRegistrarContenedor({
           <h2 className="text-2xl font-bold text-global-principal mx-auto mb-5">
             Contenedor #{codigo}
           </h2>
-          <p className="text-base text-global-principal/75 font-semibold mx-auto px-3">
+          <p className="text-base text-global-principal/75 font-semibold text-center px-3">
             {principal} y {transversal}
           </p>
-          <p className="text-base text-global-principal/75 font-semibold mx-auto px-3">
+          <p className="text-base text-global-principal/75 font-semibold text-center px-3">
             {sector}
           </p>
           <h3 className="text-xl text-global-principal font-bold">Registro:</h3>
@@ -180,10 +183,14 @@ function ModalRegistrarContenedor({
                 type="button"
                 onClick={() => setOpenModalNovedad(true)}
                 className={`text-white font-bold text-lg rounded-lg py-3 px-3 mt-10 active:bg-[#1A365D] sm:mt-5 ${
-                  formState.novedad.id ? "bg-green-600" : "bg-orange-600"
+                  formState.novedades.length > 0
+                    ? "bg-green-600"
+                    : "bg-orange-600"
                 }`}
               >
-                {formState.novedad.id ? "Novedad Registrada" : "Novedad"}
+                {formState.novedades.length > 0
+                  ? "Novedad Registrada"
+                  : "Novedad"}
               </button>
               <button
                 type="submit"
@@ -198,7 +205,7 @@ function ModalRegistrarContenedor({
       {openModalNovedad && (
         <ModalNovedad
           onNovedadSubmit={handleNovedadSubmit}
-          novedadActual={formState.novedad}
+          novedadActual={formState.novedades}
           openModalNovedad={openModalNovedad}
           setOpenModalNovedad={setOpenModalNovedad}
           codigoContenedor={codigo}
@@ -209,13 +216,14 @@ function ModalRegistrarContenedor({
 }
 
 ModalRegistrarContenedor.propTypes = {
-  codigo: PropTypes.string.isRequired,
+  codigo: PropTypes.number.isRequired,
+  id_viaje: PropTypes.number.isRequired,
   principal: PropTypes.string.isRequired,
   transversal: PropTypes.string.isRequired,
   sector: PropTypes.string.isRequired,
   hora: PropTypes.string.isRequired,
   porcentaje: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  novedad: PropTypes.object.isRequired,
+  novedad: PropTypes.array.isRequired,
   openModalRegistrar: PropTypes.bool.isRequired,
   setOpenModalRegistrar: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
