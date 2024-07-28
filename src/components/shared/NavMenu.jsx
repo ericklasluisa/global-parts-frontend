@@ -4,7 +4,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosLogOut } from "react-icons/io";
 import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../auth/hooks/useAuthStore";
 
 const paginas = [
   {
@@ -51,7 +51,7 @@ function NavMenu({ isOpen, setIsOpen }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
 
-  const navigate = useNavigate();
+  const { user, startLogout } = useAuthStore();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,10 +70,6 @@ function NavMenu({ isOpen, setIsOpen }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const usuarioDB = {
-    nombre: "Juan Perez",
-    rol: "Registrador",
-  };
   return (
     <nav>
       <div
@@ -85,18 +81,16 @@ function NavMenu({ isOpen, setIsOpen }) {
           <div className="flex flex-col items-center">
             <FaUserCircle className="text-8xl" />
             <p className="text-gray-400 mt-2 text-md font-bold">
-              {usuarioDB.nombre}
+              {user.nombre_usuario} {user.apellido_usuario}
             </p>
-            <p className="text-gray-400 mt-1 text-sm">{usuarioDB.rol}</p>
+            <p className="text-gray-400 mt-1 text-sm">{user.rol}</p>
             <div className="text-white rounded flex items-center">
               <IoIosLogOut className="text-xl" />
               <button
                 className="text-sm font-medium p-2"
                 onClick={() => {
-                  // TODO: Lógica para cerrar sesión
-                  console.log("Cerrar sesión");
                   setIsOpen(false);
-                  navigate("/");
+                  startLogout();
                 }}
               >
                 Cerrar sesión
@@ -131,9 +125,9 @@ function NavMenu({ isOpen, setIsOpen }) {
           <FaUserCircle className="text-5xl" />
           <div className="flex flex-col justify-center items-center w-auto text-center">
             <p className="text-gray-400 text-sm font-bold">
-              {usuarioDB.nombre}
+              {user.nombre_usuario} {user.apellido_usuario}
             </p>
-            <p className="text-gray-400 text-sm">{usuarioDB.rol}</p>
+            <p className="text-gray-400 text-sm">{user.rol}</p>
           </div>
           <IoIosArrowDropdown
             className="text-2xl cursor-pointer"
@@ -145,10 +139,8 @@ function NavMenu({ isOpen, setIsOpen }) {
               <button
                 className="text-sm font-medium hover:bg-gray-100 p-2 w-full text-left"
                 onClick={() => {
-                  // TODO: Lógica para cerrar sesión
-                  console.log("Cerrar sesión");
                   setIsDropdownOpen(false);
-                  navigate("/");
+                  startLogout();
                 }}
               >
                 Cerrar sesión

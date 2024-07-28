@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../hooks/useAuthStore";
 
 export default function Login() {
+  const { startLogin, errorMessage } = useAuthStore();
+
   const [userInput, setUserInput] = useState("");
   const [userIsValid, setUserIsValid] = useState(null);
   const [passwordIsValid, setPasswordIsValid] = useState(null);
@@ -10,16 +12,15 @@ export default function Login() {
   const [passwordValue, setPasswordValue] = useState("");
   const [auth, setAuth] = useState(true);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    errorMessage && setAuth(false);
+  }, [errorMessage]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (userIsValid && passwordIsValid) {
       setAuth(true);
-      //TODO: Add axios request to validate user credentials
-      navigate("/iniciar-ruta");
-    } else {
-      setAuth(false);
+      startLogin({ user: userInput, password: passwordValue });
     }
   };
 
@@ -67,11 +68,7 @@ export default function Login() {
             </label>
             <input
               className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 ${
-                userIsValid === true
-                  ? "ring-green-400 ring"
-                  : userIsValid === false
-                  ? "ring-red-400 ring"
-                  : ""
+                userIsValid === false ? "ring-red-400 ring" : ""
               }`}
               type="text"
               id="user"
@@ -93,11 +90,7 @@ export default function Login() {
             <div className="relative">
               <input
                 className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 my-3 w-full ${
-                  passwordIsValid === true
-                    ? "ring-green-400 ring"
-                    : passwordIsValid === false
-                    ? "ring-red-400 ring"
-                    : ""
+                  passwordIsValid === false ? "ring-red-400 ring" : ""
                 }`}
                 type={showPassword ? "text" : "password"}
                 id="password"
