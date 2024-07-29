@@ -26,6 +26,7 @@ export const useRegistradorStore = () => {
       const { data } = await iniciarRutaApi.post("/iniciarRuta/", recoleccion);
       dispatch(iniciarRecoleccion(data));
       localStorage.setItem("recoleccion", JSON.stringify(data));
+      navigate("/ruta");
     } catch (error) {
       console.log(error);
     }

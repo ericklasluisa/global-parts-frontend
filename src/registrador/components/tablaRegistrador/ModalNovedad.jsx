@@ -40,12 +40,8 @@ function ModalNovedad({
         const previews = {};
         novedadActual.forEach((novedad) => {
           if (novedad.foto_novedad) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              previews[novedad.id_novedad] = reader.result;
-              setPreview(previews);
-            };
-            reader.readAsDataURL(novedad.foto_novedad);
+            previews[novedad.id_novedad] = novedad.foto_novedad;
+            setPreview(previews);
           }
         });
       }

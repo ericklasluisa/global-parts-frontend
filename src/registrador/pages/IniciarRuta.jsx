@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { iniciarRutaApi } from "../api/iniciarRutaApi";
 import { useRegistradorStore } from "../hooks/useRegistradorStore";
 
@@ -34,8 +33,6 @@ function IniciarRuta() {
       setRutasDB(response.data);
     });
   }, []);
-
-  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -72,7 +69,6 @@ function IniciarRuta() {
     if (validateForm()) {
       onIniciarRecoleccion(form);
       setForm(initialForm);
-      navigate("/ruta");
     }
   };
 
