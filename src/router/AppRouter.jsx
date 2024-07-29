@@ -1,9 +1,15 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+
 import Login from "../auth/pages/Login";
 import IniciarRuta from "../registrador/pages/IniciarRuta";
 import RegistroRuta from "../registrador/pages/RegistroRuta";
 import FinalizarViaje from "../registrador/pages/FinalizarViaje";
 import FinalizarRuta from "../registrador/pages/FinalizarRuta";
+
+import TablaAdmin from "../components/TablaAdmin/TablaAdmin";
+import Notificaciones from "../components/TablaAdmin/Notificaciones";
+import Novedad from "../components/TablaAdmin/Novedad";
+
 import { useAuthStore } from "../auth/hooks/useAuthStore";
 import { useEffect } from "react";
 
@@ -33,7 +39,9 @@ function AppRouter() {
     if (user?.rol === "administrador") {
       return (
         <Routes>
-          <Route path="/" element={<h1>Páginas de Admin</h1>} />
+          <Route path="/" element={<TablaAdmin/>} />
+          <Route path="/notificaciones" element={<Notificaciones />} />
+          <Route path="/novedad" element={<Novedad />} />
         </Routes>
       );
     }
