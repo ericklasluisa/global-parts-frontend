@@ -21,7 +21,7 @@ function AppRouter() {
   useEffect(() => {
     checkAuthToken();
     if (user?.rol === "registrador") recuperarRecoleccion();
-  }, [checkAuthToken, recuperarRecoleccion, user]);
+  }, [checkAuthToken, recuperarRecoleccion]);
 
   if (status === "checking") {
     return <h1>Cargando...</h1>;
