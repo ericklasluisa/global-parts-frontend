@@ -70,15 +70,16 @@ function ModalNovedad({
   };
 
   const handleFileChange = (id_novedad, foto_novedad) => {
-    const updatedFormState = formState.map((n) =>
-      n.id_novedad === id_novedad ? { ...n, foto_novedad: foto_novedad } : n
-    );
-    setFormState(updatedFormState);
-
     if (foto_novedad && foto_novedad.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview((prev) => ({ ...prev, [id_novedad]: reader.result }));
+        const updatedFormState = formState.map((n) =>
+          n.id_novedad === id_novedad
+            ? { ...n, foto_novedad: reader.result }
+            : n
+        );
+        setFormState(updatedFormState);
       };
       reader.readAsDataURL(foto_novedad);
     }
@@ -171,6 +172,13 @@ function ModalNovedad({
             <div key={novedad.id_novedad} className="my-5">
               <p className="font-bold">
                 Suba la imagen de la novedad:{" "}
+                <span className="font-medium">
+                  {" "}
+                  {
+                    novedadesBD.find((n) => n.id_novedad === novedad.id_novedad)
+                      .nombre
+                  }
+                </span>
                 <span className="font-normal">{novedad.nombre}</span>
               </p>
               <div className="flex items-center gap-4 mt-2 p-4 bg-gray-200 rounded-lg">

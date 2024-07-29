@@ -1,14 +1,8 @@
-import { useLocation } from "react-router-dom";
 import EjemploTablaMUI from "../components/tablaRegistrador/EjemploTablaMUI";
-import { useEffect } from "react";
+import { useRegistradorStore } from "../hooks/useRegistradorStore";
 
 function RegistroRuta() {
-  const location = useLocation();
-  const recoleccion = location.state;
-
-  useEffect(() => {
-    console.log(recoleccion);
-  }, [recoleccion]);
+  const recoleccion = useRegistradorStore();
 
   return (
     <div className="m-7">
@@ -41,7 +35,7 @@ function RegistroRuta() {
           </p>
         </div>
       </div>
-      <EjemploTablaMUI recoleccion={recoleccion} />
+      <EjemploTablaMUI />
     </div>
   );
 }

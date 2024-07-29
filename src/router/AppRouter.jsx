@@ -5,14 +5,17 @@ import RegistroRuta from "../registrador/pages/RegistroRuta";
 import FinalizarViaje from "../registrador/pages/FinalizarViaje";
 import FinalizarRuta from "../registrador/pages/FinalizarRuta";
 import { useAuthStore } from "../auth/hooks/useAuthStore";
+import { useRegistradorStore } from "../registrador/hooks/useRegistradorStore.js";
 import { useEffect } from "react";
 
 function AppRouter() {
   const { status, user, checkAuthToken } = useAuthStore();
+  const { recuperarRecoleccion } = useRegistradorStore();
 
   useEffect(() => {
     checkAuthToken();
-  }, [checkAuthToken]);
+    recuperarRecoleccion();
+  }, [checkAuthToken, recuperarRecoleccion]);
 
   if (status === "checking") {
     return <h1>Cargando...</h1>;

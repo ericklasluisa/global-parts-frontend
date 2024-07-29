@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { FaTimes } from "react-icons/fa";
 import ModalNovedad from "./ModalNovedad";
-import axios from "axios";
-
-//TODO: refactoring nombre de variables para que coincida con backend
+import { registrosApi } from "../../api/registrosApi";
+import { useRegistradorStore } from "../../hooks/useRegistradorStore";
 
 const initialFormState = {
   hora_registro: "",
@@ -18,7 +17,6 @@ const initialErrors = {
 
 function ModalRegistrarContenedor({
   codigo,
-  id_viaje,
   principal,
   transversal,
   sector,
@@ -34,6 +32,8 @@ function ModalRegistrarContenedor({
   const [formState, setFormState] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
   const [openModalNovedad, setOpenModalNovedad] = useState(false);
+
+  const { id_viaje } = useRegistradorStore();
 
   useEffect(() => {
     if (openModalRegistrar) {
@@ -83,12 +83,17 @@ function ModalRegistrarContenedor({
     console.log({
       id_viaje: id_viaje,
       contenedor_id: codigo,
+      fechaRegistro: new Date().toISOString().split("T")[0],
+      horaRegistro: new Date().toISOString().split("T")[1].slice(0, 8),
       porcentaje: formState.porcentaje,
+      novedades: formState.novedades,
     });
     if (validateForm()) {
-      axios.post("http://localhost:8000/registros/upsertRegistro/", {
+      registrosApi.post("/upsertRegistro/", {
         id_viaje: id_viaje,
         contenedor_id: codigo,
+        fecha_registro: new Date().toISOString().split("T")[0],
+        hora_registro: new Date().toISOString().split("T")[1].slice(0, 8),
         porcentaje: formState.porcentaje,
         novedades: formState.novedades,
       });
@@ -217,7 +222,6 @@ function ModalRegistrarContenedor({
 
 ModalRegistrarContenedor.propTypes = {
   codigo: PropTypes.number.isRequired,
-  id_viaje: PropTypes.number.isRequired,
   principal: PropTypes.string.isRequired,
   transversal: PropTypes.string.isRequired,
   sector: PropTypes.string.isRequired,

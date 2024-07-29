@@ -2,18 +2,22 @@
 import { useEffect, useState } from "react";
 import { FaFileImage } from "react-icons/fa";
 import ModalFinalizarViaje from "../components/finalizarViaje/ModalFinalizarViaje";
+import { useRegistradorStore } from "../hooks/useRegistradorStore";
+import { viajesApi } from "../api/viajesApi";
 
 const initialErrors = {
-  numViaje: false,
+  numero_viaje: false,
   tonelajeEntrada: false,
   tonelajeSalida: false,
   imgTonelajeEntrada: false,
   imgTonelajeSalida: false,
 };
 
-function FinalizarViaje({ viajes }) {
+function FinalizarViaje() {
+  const { numero_viaje, id_recoleccion } = useRegistradorStore();
+
   const initialForm = {
-    numViaje: viajes.length || 1,
+    numero_viaje,
     tonelajeEntrada: "",
     tonelajeSalida: "",
     tonelajeViaje: "",
@@ -26,16 +30,32 @@ function FinalizarViaje({ viajes }) {
   const [imgTonelajeEntrada, setImgTonelajeEntrada] = useState(null);
   const [imgTonelajeSalida, setImgTonelajeSalida] = useState(null);
   const [openModalFinalizarViaje, setOpenModalFinalizarViaje] = useState(false);
+  const [viajes, setViajes] = useState();
+
+  useEffect(() => {
+    const obtenerViajes = async () => {
+      try {
+        const { data } = await viajesApi.get("/viajes");
+        const viajesDB = data.filter(
+          (viaje) => viaje.id_recoleccion === id_recoleccion
+        );
+        setViajes(viajesDB);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    obtenerViajes();
+  }, [id_recoleccion]);
 
   useEffect(() => {
     if (form.tonelajeEntrada && form.tonelajeSalida) {
       const tonelajeEntradaNum = parseFloat(form.tonelajeEntrada);
       const tonelajeSalidaNum = parseFloat(form.tonelajeSalida);
       if (!isNaN(tonelajeEntradaNum) && !isNaN(tonelajeSalidaNum)) {
-        if (tonelajeEntradaNum < tonelajeSalidaNum) {
+        if (tonelajeSalidaNum < tonelajeEntradaNum) {
           setForm((prevForm) => ({
             ...prevForm,
-            tonelajeViaje: tonelajeSalidaNum - tonelajeEntradaNum,
+            tonelajeViaje: tonelajeEntradaNum - tonelajeSalidaNum,
           }));
         } else {
           setForm((prevForm) => ({
@@ -101,6 +121,7 @@ function FinalizarViaje({ viajes }) {
     event.preventDefault();
     if (validateForm()) {
       // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
+      
       console.log(form);
       setOpenModalFinalizarViaje(true);
       // setForm(initialForm);
@@ -170,17 +191,18 @@ function FinalizarViaje({ viajes }) {
         <div className="flex flex-col">
           <select
             className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 w-1/3
-            ${errors.numViaje ? "ring ring-red-500" : ""}`}
-            name="numViaje"
-            id="numViaje"
+            ${errors.numero_viaje ? "ring ring-red-500" : ""}`}
+            name="numero_viaje"
+            id="numero_viaje"
             onChange={handleChange}
-            value={form.numViaje}
+            value={form.numero_viaje}
           >
-            {viajes.map((viaje) => (
-              <option key={viaje.numViaje} value={viaje.numViaje}>
-                Viaje {viaje.numViaje}
-              </option>
-            ))}
+            {viajes &&
+              viajes.map((viaje) => (
+                <option key={viaje.numero_viaje} value={viaje.numero_viaje}>
+                  Viaje {viaje.numero_viaje}
+                </option>
+              ))}
           </select>
         </div>
 

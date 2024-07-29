@@ -1,23 +1,27 @@
 import MUIDataTable from "mui-datatables";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import PropTypes from "prop-types";
 import ModalRegistrarContenedor from "./ModalRegistrarContenedor";
+import { useRegistradorStore } from "../../hooks/useRegistradorStore";
+import { iniciarRutaApi } from "../../api/iniciarRutaApi";
 
-function EjemploTablaMUI({ recoleccion }) {
+function EjemploTablaMUI() {
   const [contenedores, setContenedores] = useState([]);
   const [openModalRegistrar, setOpenModalRegistrar] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
+  const recoleccion = useRegistradorStore();
+
+  const { id_recoleccion, id_viaje } = recoleccion;
+
   useEffect(() => {
-    axios
+    iniciarRutaApi
       .get(
-        `http://localhost:8000/iniciarRuta/contenedores/ruta/registro/?id_recoleccion=${recoleccion.id_recoleccion}&id_viaje=${recoleccion.id_viaje}`
+        `/contenedores/ruta/registro/?id_recoleccion=${id_recoleccion}&id_viaje=${id_viaje}`
       )
       .then((response) => {
         setContenedores(response.data);
       });
-  }, [recoleccion]);
+  }, [id_recoleccion, id_viaje]);
 
   const handleUpdate = (index, updatedData) => {
     setContenedores((prevData) =>
@@ -130,7 +134,6 @@ function EjemploTablaMUI({ recoleccion }) {
       {selectedRowIndex !== null && (
         <ModalRegistrarContenedor
           codigo={contenedores[selectedRowIndex].id_contenedor}
-          id_viaje={recoleccion.id_viaje}
           principal={contenedores[selectedRowIndex].principal}
           transversal={contenedores[selectedRowIndex].transversal}
           sector={contenedores[selectedRowIndex].sector}
@@ -146,9 +149,5 @@ function EjemploTablaMUI({ recoleccion }) {
     </>
   );
 }
-
-EjemploTablaMUI.propTypes = {
-  recoleccion: PropTypes.object.isRequired,
-};
 
 export default EjemploTablaMUI;
