@@ -1,6 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { iniciarRutaApi } from "../api/iniciarRutaApi";
+import { useRegistradorStore } from "../hooks/useRegistradorStore";
 
 const initialForm = {
   km_inicial: "",
@@ -22,18 +23,16 @@ function IniciarRuta() {
   const [vehiculosDB, setVehiculosDB] = useState([]);
   const [rutasDB, setRutasDB] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/iniciarRuta/vehiculos/id_placa/")
-      .then((response) => {
-        setVehiculosDB(response.data);
-      });
+  const { onIniciarRecoleccion } = useRegistradorStore();
 
-    axios
-      .get("http://localhost:8000/iniciarRuta/rutas/id_nombre/")
-      .then((response) => {
-        setRutasDB(response.data);
-      });
+  useEffect(() => {
+    iniciarRutaApi.get("vehiculos/id_placa/").then((response) => {
+      setVehiculosDB(response.data);
+    });
+
+    iniciarRutaApi.get("rutas/id_nombre/").then((response) => {
+      setRutasDB(response.data);
+    });
   }, []);
 
   const navigate = useNavigate();
@@ -68,33 +67,12 @@ function IniciarRuta() {
     return isValid;
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (validateForm()) {
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/iniciarRuta/iniciarRuta/",
-          form
-        );
-        console.log("Ruta iniciada con éxito:", response.data);
-        setForm(initialForm);
-        navigate("/ruta", { state: response.data });
-      } catch (error) {
-        if (error.response) {
-          console.error(
-            "Error en la respuesta del servidor:",
-            error.response.data
-          );
-          console.error("Código de estado:", error.response.status);
-        } else if (error.request) {
-          console.error("No se recibió respuesta del servidor:", error.request);
-        } else {
-          console.error(
-            "Error en la configuración de la solicitud:",
-            error.message
-          );
-        }
-      }
+      onIniciarRecoleccion(form);
+      setForm(initialForm);
+      navigate("/ruta");
     }
   };
 
