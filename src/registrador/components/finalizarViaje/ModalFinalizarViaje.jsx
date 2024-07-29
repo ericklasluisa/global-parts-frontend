@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
+import { viajesApi } from "../../api/viajesApi";
+import { useRegistradorStore } from "../../hooks/useRegistradorStore";
 
 function ModalFinalizarViaje({
   openModalFinalizarViaje,
@@ -12,6 +14,7 @@ function ModalFinalizarViaje({
 }) {
   const finalizarViajeDialogRef = useRef(null);
   const navigate = useNavigate();
+  const { id_recoleccion } = useRegistradorStore();
 
   useEffect(() => {
     if (openModalFinalizarViaje) {
@@ -23,7 +26,7 @@ function ModalFinalizarViaje({
 
   const handleNuevoViaje = () => {
     console.log(initialForm);
-    // TODO: Implementar interacción con backend para registrar viaje
+    viajesApi.post(`/recoleccion/${id_recoleccion}`);
     setForm(initialForm);
     setOpenModalFinalizarViaje(false);
     navigate("/ruta");

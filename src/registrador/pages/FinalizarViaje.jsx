@@ -7,21 +7,21 @@ import { viajesApi } from "../api/viajesApi";
 
 const initialErrors = {
   numero_viaje: false,
-  tonelajeEntrada: false,
-  tonelajeSalida: false,
-  imgTonelajeEntrada: false,
+  tonelaje_entrada: false,
+  tonelaje_salida: false,
+  foto_entrada: false,
   imgTonelajeSalida: false,
 };
 
 function FinalizarViaje() {
-  const { numero_viaje, id_recoleccion } = useRegistradorStore();
+  const { numero_viaje, id_recoleccion, id_viaje } = useRegistradorStore();
 
   const initialForm = {
     numero_viaje,
-    tonelajeEntrada: "",
-    tonelajeSalida: "",
+    tonelaje_entrada: "",
+    tonelaje_salida: "",
     tonelajeViaje: "",
-    imgTonelajeEntrada: null,
+    foto_entrada: null,
     imgTonelajeSalida: null,
   };
 
@@ -45,9 +45,9 @@ function FinalizarViaje() {
   }, [id_recoleccion]);
 
   useEffect(() => {
-    if (form.tonelajeEntrada && form.tonelajeSalida) {
-      const tonelajeEntradaNum = parseFloat(form.tonelajeEntrada);
-      const tonelajeSalidaNum = parseFloat(form.tonelajeSalida);
+    if (form.tonelaje_entrada && form.tonelaje_salida) {
+      const tonelajeEntradaNum = parseFloat(form.tonelaje_entrada);
+      const tonelajeSalidaNum = parseFloat(form.tonelaje_salida);
       if (!isNaN(tonelajeEntradaNum) && !isNaN(tonelajeSalidaNum)) {
         if (tonelajeSalidaNum < tonelajeEntradaNum) {
           setForm((prevForm) => ({
@@ -62,7 +62,7 @@ function FinalizarViaje() {
         }
       }
     }
-  }, [form.tonelajeEntrada, form.tonelajeSalida]);
+  }, [form.tonelaje_entrada, form.tonelaje_salida]);
 
   const handleChange = (event) => {
     setForm({
@@ -77,34 +77,36 @@ function FinalizarViaje() {
   const validateForm = () => {
     const newErrors = { ...initialErrors };
     let isValid = true;
-    if (!form.tonelajeEntrada) {
-      newErrors.tonelajeEntrada = true;
+    if (!form.tonelaje_entrada) {
+      newErrors.tonelaje_entrada = true;
       isValid = false;
     }
-    if (!form.tonelajeSalida) {
-      newErrors.tonelajeSalida = true;
+    if (!form.tonelaje_salida) {
+      newErrors.tonelaje_salida = true;
       isValid = false;
     }
-    if (form.tonelajeEntrada && form.tonelajeEntrada < 0) {
-      newErrors.tonelajeEntrada = true;
+    if (form.tonelaje_entrada && form.tonelaje_entrada < 0) {
+      newErrors.tonelaje_entrada = true;
       isValid = false;
     }
-    if (form.tonelajeSalida && form.tonelajeSalida < 0) {
-      newErrors.tonelajeSalida = true;
+    if (form.tonelaje_salida && form.tonelaje_salida < 0) {
+      newErrors.tonelaje_salida = true;
       isValid = false;
     }
-    if (!form.imgTonelajeEntrada) {
-      newErrors.imgTonelajeEntrada = true;
+    if (!form.foto_entrada) {
+      newErrors.foto_entrada = true;
       isValid = false;
     }
     if (!form.imgTonelajeSalida) {
       newErrors.imgTonelajeSalida = true;
       isValid = false;
     }
-    if (form.tonelajeEntrada && form.tonelajeSalida) {
-      if (parseFloat(form.tonelajeEntrada) > parseFloat(form.tonelajeSalida)) {
-        newErrors.tonelajeSalida = true;
-        newErrors.tonelajeEntrada = true;
+    if (form.tonelaje_entrada && form.tonelaje_salida) {
+      if (
+        parseFloat(form.tonelaje_entrada) < parseFloat(form.tonelaje_salida)
+      ) {
+        newErrors.tonelaje_salida = true;
+        newErrors.tonelaje_entrada = true;
         isValid = false;
       }
     }
@@ -117,36 +119,36 @@ function FinalizarViaje() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateForm()) {
-      // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
-
-      console.log(form);
+      viajesApi.put(`/${id_viaje}`, {
+        ...form,
+        id_recoleccion,
+      });
       setOpenModalFinalizarViaje(true);
       setForm(initialForm);
     }
   };
 
   const handleImgTonelajeEntradaButtonClick = () => {
-    document.getElementById("imgTonelajeEntrada").click();
+    document.getElementById("foto_entrada").click();
   };
 
   const handleImgTonelajeEntradaChange = (event) => {
     const file = event.target.files[0];
     readImgTonelajeEntrada(file);
-    if (errors["imgTonelajeEntrada"]) {
-      setErrors({ ...errors, ["imgTonelajeEntrada"]: false });
+    if (errors["foto_entrada"]) {
+      setErrors({ ...errors, ["foto_entrada"]: false });
     }
   };
 
   const readImgTonelajeEntrada = (file) => {
     if (file && file.type.startsWith("image/")) {
-      setForm((prevState) => ({
-        ...prevState,
-        imgTonelajeEntrada: file,
-      }));
-
       const reader = new FileReader();
       reader.onloadend = () => {
         setImgTonelajeEntrada(reader.result);
+        setForm((prevState) => ({
+          ...prevState,
+          foto_entrada: reader.result,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -166,14 +168,13 @@ function FinalizarViaje() {
 
   const readImgTonelajeSalida = (file) => {
     if (file && file.type.startsWith("image/")) {
-      setForm((prevState) => ({
-        ...prevState,
-        imgTonelajeSalida: file,
-      }));
-
       const reader = new FileReader();
       reader.onloadend = () => {
         setImgTonelajeSalida(reader.result);
+        setForm((prevState) => ({
+          ...prevState,
+          imgTonelajeSalida: reader.result,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -205,18 +206,18 @@ function FinalizarViaje() {
 
         <div className="flex flex-col">
           <label
-            htmlFor="tonelajeEntrada"
+            htmlFor="tonelaje_entrada"
             className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Tonelaje Entrada
           </label>
           <input
             className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 
-            ${errors.tonelajeEntrada ? "ring-red-500 ring" : ""}`}
+            ${errors.tonelaje_entrada ? "ring-red-500 ring" : ""}`}
             type="number"
-            name="tonelajeEntrada"
+            name="tonelaje_entrada"
             placeholder="Tonelaje"
-            value={form.tonelajeEntrada}
+            value={form.tonelaje_entrada}
             onChange={handleChange}
           />
         </div>
@@ -243,7 +244,7 @@ function FinalizarViaje() {
           </button>
           <input
             type="file"
-            id="imgTonelajeEntrada"
+            id="foto_entrada"
             name="file"
             accept="image/*"
             className="hidden"
@@ -252,25 +253,25 @@ function FinalizarViaje() {
         </div>
 
         <div className="mb-2">
-          {errors.imgTonelajeEntrada && (
+          {errors.foto_entrada && (
             <p className="text-red-500 text-sm">Seleccione una imagen válida</p>
           )}
         </div>
 
         <div className="flex flex-col">
           <label
-            htmlFor="tonelajeSalida"
+            htmlFor="tonelaje_salida"
             className="text-global-principal/80 font-semibold text-lg sm:text-base"
           >
             Tonelaje Salida
           </label>
           <input
             className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 
-            ${errors.tonelajeSalida ? "ring-red-500 ring" : ""}`}
+            ${errors.tonelaje_salida ? "ring-red-500 ring" : ""}`}
             type="number"
-            name="tonelajeSalida"
+            name="tonelaje_salida"
             placeholder="Tonelaje"
-            value={form.tonelajeSalida}
+            value={form.tonelaje_salida}
             onChange={handleChange}
           />
         </div>
