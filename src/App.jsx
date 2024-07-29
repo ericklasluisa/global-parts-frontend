@@ -9,9 +9,9 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen max-h-screen">
       <Header />
-      {/*<TablaAdmin />
-      <Notificaciones/>*/}
-      <Novedad/>
+      <TablaAdmin />
+      {/*<Notificaciones/>
+      <Novedad/>*/}
       <Footer />
     </div>
   );
