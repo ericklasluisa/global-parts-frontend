@@ -1,19 +1,19 @@
-import "./App.css";
 import Footer from "./components/shared/Footer";
 import Header from "./components/shared/Header";
-import TablaAdmin from "./components/TablaAdmin/TablaAdmin";
-import Notificaciones from "./components/TablaAdmin/Notificaciones";
-import Novedad from "./components/TablaAdmin/Novedad";
+import { BrowserRouter } from "react-router-dom";
+import AppRouter from "./router/AppRouter";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen max-h-screen">
-      <Header />
-      <TablaAdmin />
-      {/*<Notificaciones/>
-      <Novedad/>*/}
-      <Footer />
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Header />
+        <AppRouter />
+        <Footer />
+      </BrowserRouter>
+    </Provider>
   );
 }
 
