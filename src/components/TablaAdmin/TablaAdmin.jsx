@@ -227,7 +227,8 @@ function Tabla({ mes, anio, ruta, contenedor }) {
     })
     .filter(
       (registro) =>
-        contenedor === "" || registro.contenedor.toString() === contenedor
+        (contenedor === "" || registro.contenedor.toString() === contenedor) &&
+        (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre === ruta)
     );
 
   return (
@@ -259,77 +260,75 @@ function Tabla({ mes, anio, ruta, contenedor }) {
           </tr>
         </thead>
         <tbody>
-          {rutas.map(
-            (rutaMap) =>
-              (ruta === "*" || ruta === rutaMap.nombre) && (
-                <>
-                  <tr
-                    className="border-b border-gray-200 bg-gray-500"
-                    key={rutaMap.id}
-                  >
-                    <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">
-                      {rutaMap.nombre}
-                    </td>
-                    <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
-                  </tr>
-                  {registrosFiltrados
-                    .filter((registro) => registro.ruta === rutaMap.id)
-                    .map((registro, i) => {
-                      const contenedor = contenedores.find(
-                        (c) => c.id === registro.contenedor
-                      );
-                      const promedioMes =
-                        registro.porcentajes.reduce(
-                          (acc, p) => acc + p.porcentaje,
-                          0
-                        ) / registro.porcentajes.length || 0;
+          {rutas.map((rutaMap) =>
+            registrosFiltrados.some((registro) => registro.ruta === rutaMap.id) ? (
+              <>
+                <tr
+                  className="border-b border-gray-200 bg-gray-500"
+                  key={rutaMap.id}
+                >
+                  <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">
+                    {rutaMap.nombre}
+                  </td>
+                  <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
+                </tr>
+                {registrosFiltrados
+                  .filter((registro) => registro.ruta === rutaMap.id)
+                  .map((registro, i) => {
+                    const contenedor = contenedores.find(
+                      (c) => c.id === registro.contenedor
+                    );
+                    const promedioMes =
+                      registro.porcentajes.reduce(
+                        (acc, p) => acc + p.porcentaje,
+                        0
+                      ) / registro.porcentajes.length || 0;
 
-                      return (
-                        <tr key={i} className="border-b border-gray-200">
-                          <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">
-                            {registro.contenedor}
-                          </td>
-                          <td className="px-6 py-3 truncate max-w-xs">
-                            {contenedor.principal}
-                          </td>
-                          <td className="px-6 py-3 bg-gray-50 truncate max-w-xs">
-                            {contenedor.transversal}
-                          </td>
-                          <td className="px-6 py-3 truncate max-w-xs">
-                            {contenedor.sector}
-                          </td>
-                          {dias.map((dia, index) => {
-                            const porcentajeDia =
-                              registro.porcentajes.find(
-                                (p) =>
-                                  parseInt(p.dia.split("/")[0]) === index + 1
-                              )?.porcentaje || 0;
-                            return (
-                              <td
-                                key={index}
-                                className={`px-6 py-3 ${
-                                  index % 2 === 0 ? "bg-gray-50" : ""
-                                }`}
-                              >
-                                {porcentajeDia}
-                              </td>
-                            );
-                          })}
-                          <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">
-                            {promedioMes.toFixed(2)}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </>
-              )
+                    return (
+                      <tr key={i} className="border-b border-gray-200">
+                        <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">
+                          {registro.contenedor}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.principal}
+                        </td>
+                        <td className="px-6 py-3 bg-gray-50 truncate max-w-xs">
+                          {contenedor.transversal}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.sector}
+                        </td>
+                        {dias.map((dia, index) => {
+                          const porcentajeDia =
+                            registro.porcentajes.find(
+                              (p) =>
+                                parseInt(p.dia.split("/")[0]) === index + 1
+                            )?.porcentaje || 0;
+                          return (
+                            <td
+                              key={index}
+                              className={`px-6 py-3 ${
+                                index % 2 === 0 ? "bg-gray-50" : ""
+                              }`}
+                            >
+                              {porcentajeDia}
+                            </td>
+                          );
+                        })}
+                        <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">
+                          {promedioMes.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </>
+            ) : null
           )}
         </tbody>
       </table>
     </div>
   );
 }
-
 export default function TablaAdmin() {
   const [mes, setMes] = useState([]);
   const [anio, setAnio] = useState([]);
