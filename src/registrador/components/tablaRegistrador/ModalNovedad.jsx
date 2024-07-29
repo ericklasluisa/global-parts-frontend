@@ -70,15 +70,16 @@ function ModalNovedad({
   };
 
   const handleFileChange = (id_novedad, foto_novedad) => {
-    const updatedFormState = formState.map((n) =>
-      n.id_novedad === id_novedad ? { ...n, foto_novedad: foto_novedad } : n
-    );
-    setFormState(updatedFormState);
-
     if (foto_novedad && foto_novedad.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview((prev) => ({ ...prev, [id_novedad]: reader.result }));
+        const updatedFormState = formState.map((n) =>
+          n.id_novedad === id_novedad
+            ? { ...n, foto_novedad: reader.result }
+            : n
+        );
+        setFormState(updatedFormState);
       };
       reader.readAsDataURL(foto_novedad);
     }
