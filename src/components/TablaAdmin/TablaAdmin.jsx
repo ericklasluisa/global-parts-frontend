@@ -201,9 +201,10 @@ function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
   );
 }
 
-function Tabla({ mes, anio, ruta, contenedor }) {
+function Tabla({ mes, anio, filtroRuta, filtroContenedor }) {
   const [dias, setDias] = useState([]);
 
+  //Extraer los días del mes y año seleccionado
   useEffect(() => {
     var numDias = new Date(anio, mes, 0).getDate();
     const diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
@@ -217,9 +218,11 @@ function Tabla({ mes, anio, ruta, contenedor }) {
 
   const numColumnas = 4 + dias.length + 2;
 
+  //Filtrar los registros por ruta y contenedor
   const registrosFiltrados = registros
     .map((registro) => {
-      const porcentajesMes = registro.porcentajes.filter((p) => {
+      const porcentajesMes = registro.porcentajes
+      .filter((p) => {
         const [day, month, year] = p.dia.split("/");
         return parseInt(month) === mes && parseInt(year) === anio;
       });
@@ -227,12 +230,13 @@ function Tabla({ mes, anio, ruta, contenedor }) {
     })
     .filter(
       (registro) =>
-        contenedor === "" || registro.contenedor.toString() === contenedor
+        filtroContenedor === "" || registro.contenedor.toString() === filtroContenedor
     );
 
   return (
     <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
       <table className="w-auto text-sm text-gray-500">
+
         <thead className="text-xs text-gray-700 uppercase">
           <tr className="border-b border-gray-200 sticky top-0 z-10">
             <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0 z-20">
@@ -258,22 +262,23 @@ function Tabla({ mes, anio, ruta, contenedor }) {
             </th>
           </tr>
         </thead>
+
         <tbody>
           {rutas.map(
-            (rutaMap) =>
-              (ruta === "*" || ruta === rutaMap.nombre) && (
+            (rutaMapeada) =>
+              ((filtroRuta === "*" || filtroRuta === rutaMapeada.nombre)) && (
                 <>
                   <tr
                     className="border-b border-gray-200 bg-gray-500"
-                    key={rutaMap.id}
+                    key={rutaMapeada.id}
                   >
                     <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">
-                      {rutaMap.nombre}
+                      {rutaMapeada.nombre}
                     </td>
                     <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
                   </tr>
                   {registrosFiltrados
-                    .filter((registro) => registro.ruta === rutaMap.id)
+                    .filter((registro) => registro.ruta === rutaMapeada.id)
                     .map((registro, i) => {
                       const contenedor = contenedores.find(
                         (c) => c.id === registro.contenedor
@@ -325,6 +330,7 @@ function Tabla({ mes, anio, ruta, contenedor }) {
               )
           )}
         </tbody>
+        
       </table>
     </div>
   );
@@ -352,7 +358,7 @@ export default function TablaAdmin() {
         setRuta={setRuta}
         setContenedor={setContenedor}
       />
-      <Tabla mes={mes} anio={anio} ruta={ruta} contenedor={contenedor} />
+      <Tabla mes={mes} anio={anio} filtroRuta={ruta} filtroContenedor={contenedor} />
     </div>
   );
 }
