@@ -98,7 +98,23 @@ function NavMenu({ isOpen, setIsOpen }) {
             </div>
           </div>
           <hr className="w-full border border-gray-400 mt-3" />
-          <ul className="flex flex-col gap-8 my-5 text-center">
+          {user.rol === "registrador" && (
+            <ul className="flex flex-col gap-8 my-5 text-center">
+              {paginas.map((pagina) => (
+                <ListItem
+                  key={pagina.text}
+                  text={pagina.text}
+                  path={pagina.path}
+                  setIsOpen={setIsOpen}
+                />
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+      <div className="md:flex bg-global-principal h-full items-center pr-10 text-white hidden">
+        {user.rol === "registrador" && (
+          <ul className="flex gap-5 text-center mr-5">
             {paginas.map((pagina) => (
               <ListItem
                 key={pagina.text}
@@ -108,19 +124,7 @@ function NavMenu({ isOpen, setIsOpen }) {
               />
             ))}
           </ul>
-        </div>
-      </div>
-      <div className="md:flex bg-global-principal h-full items-center pr-10 text-white hidden">
-        <ul className="flex gap-5 text-center mr-5">
-          {paginas.map((pagina) => (
-            <ListItem
-              key={pagina.text}
-              text={pagina.text}
-              path={pagina.path}
-              setIsOpen={setIsOpen}
-            />
-          ))}
-        </ul>
+        )}
         <div className="relative flex items-center gap-4" ref={dropdownRef}>
           <FaUserCircle className="text-5xl" />
           <div className="flex flex-col justify-center items-center w-auto text-center">

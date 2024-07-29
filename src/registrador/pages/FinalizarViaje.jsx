@@ -35,11 +35,8 @@ function FinalizarViaje() {
   useEffect(() => {
     const obtenerViajes = async () => {
       try {
-        const { data } = await viajesApi.get("/viajes");
-        const viajesDB = data.filter(
-          (viaje) => viaje.id_recoleccion === id_recoleccion
-        );
-        setViajes(viajesDB);
+        const { data } = await viajesApi.get(`/recoleccion/${id_recoleccion}`);
+        setViajes(data);
       } catch (error) {
         console.log(error);
       }
@@ -121,10 +118,10 @@ function FinalizarViaje() {
     event.preventDefault();
     if (validateForm()) {
       // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
-      
+
       console.log(form);
       setOpenModalFinalizarViaje(true);
-      // setForm(initialForm);
+      setForm(initialForm);
     }
   };
 
