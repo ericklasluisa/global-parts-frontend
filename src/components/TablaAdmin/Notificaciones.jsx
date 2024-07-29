@@ -58,7 +58,7 @@ function Filtro({ setEstado, setRuta, setContenedor, setPaginaActual }) {
     }
 
     return (
-        <div className="flex flex-col flex-1 md:pr-4">
+        <div className="flex flex-col md:flex-1 md:pr-4">
             <div className="flex shadow-sm mx-auto bg-global-principal m-4 rounded-lg items-center border-gray-200 border w-full">
                 <section className="px-4 py-3 bg-global-principal text-sm text-white font-medium rounded-s-lg">
                     <FaFilter />

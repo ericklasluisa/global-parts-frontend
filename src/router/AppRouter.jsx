@@ -20,8 +20,8 @@ function AppRouter() {
 
   useEffect(() => {
     checkAuthToken();
-    recuperarRecoleccion();
-  }, [checkAuthToken, recuperarRecoleccion]);
+    if (user?.rol === "registrador") recuperarRecoleccion();
+  }, [checkAuthToken, recuperarRecoleccion, user]);
 
   if (status === "checking") {
     return <h1>Cargando...</h1>;
@@ -42,7 +42,7 @@ function AppRouter() {
     if (user?.rol === "administrador") {
       return (
         <Routes>
-          <Route path="/" element={<TablaAdmin/>} />
+          <Route path="/" element={<TablaAdmin />} />
           <Route path="/notificaciones" element={<Notificaciones />} />
           <Route path="/novedad" element={<Novedad />} />
         </Routes>
