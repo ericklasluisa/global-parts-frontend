@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
-import { viajesApi } from "../../api/viajesApi";
 import { useRegistradorStore } from "../../hooks/useRegistradorStore";
 
 function ModalFinalizarViaje({
@@ -14,7 +13,7 @@ function ModalFinalizarViaje({
 }) {
   const finalizarViajeDialogRef = useRef(null);
   const navigate = useNavigate();
-  const { id_recoleccion } = useRegistradorStore();
+  const { onNuevoViaje } = useRegistradorStore();
 
   useEffect(() => {
     if (openModalFinalizarViaje) {
@@ -25,8 +24,7 @@ function ModalFinalizarViaje({
   }, [openModalFinalizarViaje]);
 
   const handleNuevoViaje = () => {
-    console.log(initialForm);
-    viajesApi.post(`/recoleccion/${id_recoleccion}`);
+    onNuevoViaje();
     setForm(initialForm);
     setOpenModalFinalizarViaje(false);
     navigate("/ruta");
