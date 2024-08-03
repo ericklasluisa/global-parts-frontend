@@ -80,14 +80,6 @@ function ModalRegistrarContenedor({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log({
-      id_viaje: id_viaje,
-      contenedor_id: codigo,
-      fechaRegistro: new Date().toISOString().split("T")[0],
-      horaRegistro: new Date().toISOString().split("T")[1].slice(0, 8),
-      porcentaje: formState.porcentaje,
-      novedades: formState.novedades,
-    });
     if (validateForm()) {
       registrosApi.post("/upsertRegistro/", {
         id_viaje: id_viaje,
