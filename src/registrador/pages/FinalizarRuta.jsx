@@ -1,13 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { finalizarRutaApi } from "../api/finalizarRutaApi";
+import { useRegistradorStore } from "../hooks/useRegistradorStore";
+import { useNavigate } from "react-router-dom";
 
 const initialForm = {
-  kmFinal: "",
-  tonelajeTotal: "",
+  km_final: "",
+  tonelaje_total: "",
 };
 
 function FinalizarRuta() {
   const [form, setForm] = useState(initialForm);
   const [errorKmFinal, setErrorKmFinal] = useState(false);
+  const { id_recoleccion, onFinalizarRuta } = useRegistradorStore();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    id_recoleccion || navigate("/");
+  }, [navigate, id_recoleccion]);
+
+  useEffect(() => {
+    const obtenerTonelajeTotal = async () => {
+      try {
+        const { data } = await finalizarRutaApi.get(
+          `/${id_recoleccion}/tonelaje`
+        );
+
+        data &&
+          setForm((prevForm) => ({
+            ...prevForm,
+            tonelaje_total: data,
+          }));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    obtenerTonelajeTotal();
+  }, [id_recoleccion]);
 
   const handleChange = (event) => {
     setForm({
@@ -20,7 +50,7 @@ function FinalizarRuta() {
   const validateForm = () => {
     let newError = false;
     let isValid = true;
-    if (!form.kmFinal) {
+    if (!form.km_final) {
       newError = true;
       isValid = false;
     }
@@ -32,7 +62,7 @@ function FinalizarRuta() {
     event.preventDefault();
     if (validateForm()) {
       // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
-      console.log(form);
+      onFinalizarRuta(form);
       setForm(initialForm);
     }
   };
@@ -54,9 +84,9 @@ function FinalizarRuta() {
             className={`bg-[#F1F4F9] border-[#D8D8D8] border rounded-lg p-2 mt-3 
             ${errorKmFinal ? "ring-red-500 ring" : ""}`}
             type="number"
-            name="kmFinal"
+            name="km_final"
             placeholder="Kilometraje"
-            value={form.kmFinal}
+            value={form.km_final}
             onChange={handleChange}
           />
         </div>
@@ -71,9 +101,9 @@ function FinalizarRuta() {
           <input
             className="bg-white border-[#D8D8D8] border rounded-lg p-2 mt-3"
             type="number"
-            name="tonelajeTotal"
+            name="tonelaje_total"
             placeholder="Σ Tonelaje Total"
-            value={form.tonelajeTotal}
+            value={form.tonelaje_total}
             onChange={handleChange}
             disabled
           />

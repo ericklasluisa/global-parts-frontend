@@ -27,6 +27,7 @@ function ModalNovedad({
   setOpenModalNovedad,
   codigoContenedor,
 }) {
+  //TODO: IMAGEN NO SE RENDERIZA EN EL MODAL CUANDO SE RECARGA LA PÁGINA
   const [formState, setFormState] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
   const [preview, setPreview] = useState({});

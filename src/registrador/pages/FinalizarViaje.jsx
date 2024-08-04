@@ -4,6 +4,7 @@ import { FaFileImage } from "react-icons/fa";
 import ModalFinalizarViaje from "../components/finalizarViaje/ModalFinalizarViaje";
 import { useRegistradorStore } from "../hooks/useRegistradorStore";
 import { viajesApi } from "../api/viajesApi";
+import { useNavigate } from "react-router-dom";
 
 const initialErrors = {
   numero_viaje: false,
@@ -15,6 +16,12 @@ const initialErrors = {
 
 function FinalizarViaje() {
   const { numero_viaje, id_recoleccion, id_viaje } = useRegistradorStore();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    id_recoleccion || navigate("/");
+  }, [navigate, id_recoleccion]);
 
   const initialForm = {
     numero_viaje,
