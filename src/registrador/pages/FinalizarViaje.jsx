@@ -118,7 +118,6 @@ function FinalizarViaje() {
       }
     }
 
-    // TODO: VALIDAR NUMERO DE VIAJE
     setErrors(newErrors);
     return isValid;
   };

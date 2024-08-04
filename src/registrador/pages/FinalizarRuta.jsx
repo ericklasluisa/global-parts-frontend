@@ -61,7 +61,6 @@ function FinalizarRuta() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (validateForm()) {
-      // TODO: ENVIAR DATOS A LA API Y REDIRECCIONAR A LA PÁGINA DE RUTA
       onFinalizarRuta(form);
       setForm(initialForm);
     }
