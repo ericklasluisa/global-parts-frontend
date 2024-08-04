@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { iniciarRutaApi } from "../api/iniciarRutaApi";
 import { useRegistradorStore } from "../hooks/useRegistradorStore";
-
-const initialForm = {
-  km_inicial: "",
-  id_vehiculo: "",
-  id_ruta: "",
-  id_registrador: 1,
-};
+import { useAuthStore } from "../../auth/hooks/useAuthStore";
 
 const initialErrors = {
   km_inicial: false,
@@ -17,12 +11,20 @@ const initialErrors = {
 };
 
 function IniciarRuta() {
+  const { onIniciarRecoleccion } = useRegistradorStore();
+  const { user } = useAuthStore();
+
+  const initialForm = {
+    km_inicial: "",
+    id_vehiculo: "",
+    id_ruta: "",
+    id_registrador: user.id_usuario,
+  };
+
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState(initialErrors);
   const [vehiculosDB, setVehiculosDB] = useState([]);
   const [rutasDB, setRutasDB] = useState([]);
-
-  const { onIniciarRecoleccion } = useRegistradorStore();
 
   useEffect(() => {
     iniciarRutaApi.get("vehiculos/id_placa/").then((response) => {

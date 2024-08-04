@@ -42,7 +42,7 @@ export const useAuthStore = () => {
       const { data } = await authApi.post("/login");
       dispatch(
         onLogin({
-          id_usuario: data.id,
+          id_usuario: data.id_user,
           nombre_usuario: data.nombre_usuario,
           apellido_usuario: data.apellido_usuario,
           rol: data.rol,

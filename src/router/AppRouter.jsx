@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Login from "../auth/pages/Login";
@@ -12,16 +13,24 @@ import Novedad from "../components/TablaAdmin/Novedad";
 
 import { useAuthStore } from "../auth/hooks/useAuthStore";
 import { useRegistradorStore } from "../registrador/hooks/useRegistradorStore.js";
-import { useEffect } from "react";
 
 function AppRouter() {
   const { status, user, checkAuthToken } = useAuthStore();
   const { recuperarRecoleccion } = useRegistradorStore();
 
   useEffect(() => {
-    checkAuthToken();
-    if (user?.rol === "registrador") recuperarRecoleccion();
-  }, [checkAuthToken, recuperarRecoleccion]);
+    const initializeAuth = async () => {
+      await checkAuthToken();
+    };
+
+    initializeAuth();
+  }, [checkAuthToken]);
+
+  useEffect(() => {
+    if (status === "authenticated" && user?.rol === "registrador") {
+      recuperarRecoleccion();
+    }
+  }, [status, user, recuperarRecoleccion]);
 
   if (status === "checking") {
     return <h1>Cargando...</h1>;
