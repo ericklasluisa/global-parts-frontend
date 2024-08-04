@@ -10,7 +10,7 @@ function RegistroRuta() {
         Registro de Ruta
       </h2>
       <div className="flex justify-between mx-2 text-global-principal">
-        <h3 className="text-2xl font-bold">Ruta {recoleccion.nombre_ruta}</h3>
+        <h3 className="text-2xl font-bold">Ruta {recoleccion.id_recoleccion}</h3>
         <h3 className="text-2xl font-bold">
           Viaje #{recoleccion.numero_viaje}
         </h3>

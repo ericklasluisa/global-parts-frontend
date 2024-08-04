@@ -9,7 +9,7 @@ import { useAuthStore } from "../../auth/hooks/useAuthStore";
 const paginas = [
   {
     text: "Iniciar Ruta",
-    path: "/iniciar-ruta",
+    path: "/",
   },
   {
     text: "Registro en Ruta",
