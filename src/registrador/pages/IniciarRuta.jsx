@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { iniciarRutaApi } from "../api/iniciarRutaApi";
 import { useRegistradorStore } from "../hooks/useRegistradorStore";
 import { useAuthStore } from "../../auth/hooks/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 const initialErrors = {
   km_inicial: false,
@@ -11,8 +12,9 @@ const initialErrors = {
 };
 
 function IniciarRuta() {
-  const { onIniciarRecoleccion } = useRegistradorStore();
+  const { onIniciarRecoleccion, id_recoleccion } = useRegistradorStore();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const initialForm = {
     km_inicial: "",
@@ -35,6 +37,10 @@ function IniciarRuta() {
       setRutasDB(response.data);
     });
   }, []);
+
+  useEffect(() => {
+    id_recoleccion && navigate("/ruta");
+  }, [id_recoleccion, navigate]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;

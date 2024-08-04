@@ -10,7 +10,7 @@ const initialErrors = {
   tonelaje_entrada: false,
   tonelaje_salida: false,
   foto_entrada: false,
-  imgTonelajeSalida: false,
+  foto_salida: false,
 };
 
 function FinalizarViaje() {
@@ -22,7 +22,7 @@ function FinalizarViaje() {
     tonelaje_salida: "",
     tonelajeViaje: "",
     foto_entrada: null,
-    imgTonelajeSalida: null,
+    foto_salida: null,
   };
 
   const [form, setForm] = useState(initialForm);
@@ -97,8 +97,8 @@ function FinalizarViaje() {
       newErrors.foto_entrada = true;
       isValid = false;
     }
-    if (!form.imgTonelajeSalida) {
-      newErrors.imgTonelajeSalida = true;
+    if (!form.foto_salida) {
+      newErrors.foto_salida = true;
       isValid = false;
     }
     if (form.tonelaje_entrada && form.tonelaje_salida) {
@@ -155,14 +155,14 @@ function FinalizarViaje() {
   };
 
   const handleImgTonelajeSalidaButtonClick = () => {
-    document.getElementById("imgTonelajeSalida").click();
+    document.getElementById("foto_salida").click();
   };
 
   const handleImgTonelajeSalidaChange = (event) => {
     const file = event.target.files[0];
     readImgTonelajeSalida(file);
-    if (errors["imgTonelajeSalida"]) {
-      setErrors({ ...errors, ["imgTonelajeSalida"]: false });
+    if (errors["foto_salida"]) {
+      setErrors({ ...errors, ["foto_salida"]: false });
     }
   };
 
@@ -173,7 +173,7 @@ function FinalizarViaje() {
         setImgTonelajeSalida(reader.result);
         setForm((prevState) => ({
           ...prevState,
-          imgTonelajeSalida: reader.result,
+          foto_salida: reader.result,
         }));
       };
       reader.readAsDataURL(file);
@@ -298,7 +298,7 @@ function FinalizarViaje() {
           </button>
           <input
             type="file"
-            id="imgTonelajeSalida"
+            id="foto_salida"
             name="file"
             accept="image/*"
             className="hidden"
@@ -307,7 +307,7 @@ function FinalizarViaje() {
         </div>
 
         <div className="mb-2">
-          {errors.imgTonelajeSalida && (
+          {errors.foto_salida && (
             <p className="text-red-500 text-sm">Seleccione una imagen válida</p>
           )}
         </div>
