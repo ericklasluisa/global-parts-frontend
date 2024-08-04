@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { iniciarRutaApi } from "../api/iniciarRutaApi";
 import {
+  finalizarRecoleccion,
   iniciarRecoleccion,
   nuevoViaje,
 } from "../../store/recoleccion/recoleccionSlice";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { viajesApi } from "../api/viajesApi";
+import { finalizarRutaApi } from "../api/finalizarRutaApi";
 
 export const useRegistradorStore = () => {
   const {
@@ -33,13 +35,27 @@ export const useRegistradorStore = () => {
   };
 
   const recuperarRecoleccion = useCallback(async () => {
+    const buscarRecoleccionUsuario = async () => {
+      try {
+        const { data } = await iniciarRutaApi.get(
+          `/recoleccion_actual_usuario/${id_registrador}`
+        );
+        dispatch(iniciarRecoleccion(data));
+        localStorage.setItem("recoleccion", JSON.stringify(data));
+        navigate("/ruta");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const recoleccion = localStorage.getItem("recoleccion");
     if (!recoleccion) {
+      buscarRecoleccionUsuario();
       navigate("/");
       return;
     }
     dispatch(iniciarRecoleccion(JSON.parse(recoleccion)));
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, id_registrador]);
 
   const onNuevoViaje = async () => {
     try {
@@ -60,6 +76,22 @@ export const useRegistradorStore = () => {
     }
   };
 
+  const onFinalizarRuta = async (finalizarRuta) => {
+    try {
+      await finalizarRutaApi.put(`/${id_recoleccion}`, {
+        ...finalizarRuta,
+        id_registrador,
+        id_ruta,
+        id_vehiculo,
+      });
+      dispatch(finalizarRecoleccion());
+      localStorage.removeItem("recoleccion");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return {
     id_recoleccion,
     id_registrador,
@@ -71,5 +103,6 @@ export const useRegistradorStore = () => {
     onIniciarRecoleccion,
     recuperarRecoleccion,
     onNuevoViaje,
+    onFinalizarRuta,
   };
 };
