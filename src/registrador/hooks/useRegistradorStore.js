@@ -34,28 +34,33 @@ export const useRegistradorStore = () => {
     }
   };
 
-  const recuperarRecoleccion = useCallback(async () => {
-    const buscarRecoleccionUsuario = async () => {
-      try {
-        const { data } = await iniciarRutaApi.get(
-          `/recoleccion_actual_usuario/${id_registrador}`
-        );
-        dispatch(iniciarRecoleccion(data));
-        localStorage.setItem("recoleccion", JSON.stringify(data));
-        navigate("/ruta");
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const recuperarRecoleccion = useCallback(
+    async (id_usuario) => {
+      const buscarRecoleccionUsuario = async () => {
+        try {
+          const { data } = await iniciarRutaApi.get(
+            `/recoleccion_actual_usuario/${id_usuario}`
+          );
+          console.log(data);
 
-    const recoleccion = localStorage.getItem("recoleccion");
-    if (!recoleccion) {
-      buscarRecoleccionUsuario();
-      navigate("/");
-      return;
-    }
-    dispatch(iniciarRecoleccion(JSON.parse(recoleccion)));
-  }, [dispatch, navigate, id_registrador]);
+          dispatch(iniciarRecoleccion(data));
+          localStorage.setItem("recoleccion", JSON.stringify(data));
+          navigate("/ruta");
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      const recoleccion = localStorage.getItem("recoleccion");
+      if (!recoleccion) {
+        buscarRecoleccionUsuario();
+        navigate("/");
+        return;
+      }
+      dispatch(iniciarRecoleccion(JSON.parse(recoleccion)));
+    },
+    [dispatch, navigate]
+  );
 
   const onNuevoViaje = async () => {
     try {

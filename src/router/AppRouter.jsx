@@ -28,12 +28,18 @@ function AppRouter() {
 
   useEffect(() => {
     if (status === "authenticated" && user?.rol === "registrador") {
-      recuperarRecoleccion();
+      recuperarRecoleccion(user.id_usuario);
     }
   }, [status, user, recuperarRecoleccion]);
 
   if (status === "checking") {
-    return <h1>Cargando...</h1>;
+    return (
+      <div className="flex flex-row gap-4 mx-auto">
+        <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+        <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
+        <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+      </div>
+    );
   }
 
   if (status === "authenticated") {
