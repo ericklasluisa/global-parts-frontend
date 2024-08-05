@@ -1,18 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FaFileImage, FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
-
-const novedadesBD = [
-  { id_novedad: 1, nombre: "Siniestro" },
-  { id_novedad: 2, nombre: "Daño Manigucto" },
-  { id_novedad: 3, nombre: "Pedal" },
-  { id_novedad: 4, nombre: "Compuerta" },
-  { id_novedad: 5, nombre: "Caucho" },
-  { id_novedad: 6, nombre: "Rodillo de toma" },
-  { id_novedad: 7, nombre: "Stickers/graffiti" },
-  { id_novedad: 8, nombre: "Media Luna" },
-  { id_novedad: 9, nombre: "Amortiguador" },
-];
+import { novedadApi } from "../../api/novedadApi";
 
 const initialFormState = [];
 
@@ -28,10 +17,17 @@ function ModalNovedad({
   codigoContenedor,
 }) {
   //TODO: IMAGEN NO SE RENDERIZA EN EL MODAL CUANDO SE RECARGA LA PÁGINA
+  const [novedadesBD, setNovedadesBD] = useState([]);
   const [formState, setFormState] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
   const [preview, setPreview] = useState({});
   const novedadDialogRef = useRef(null);
+
+  useEffect(() => {
+    novedadApi.get("/getNovedades").then((response) => {
+      setNovedadesBD(response.data);
+    });
+  }, []);
 
   useEffect(() => {
     if (openModalNovedad) {
@@ -154,7 +150,7 @@ function ModalNovedad({
                   onChange={() => handleChange(novedad.id_novedad)}
                 />
                 <label htmlFor={`novedad${novedad.id_novedad}`}>
-                  {novedad.nombre}
+                  {novedad.nombre_novedad}
                 </label>
               </div>
             ))}
@@ -173,7 +169,7 @@ function ModalNovedad({
                   {" "}
                   {
                     novedadesBD.find((n) => n.id_novedad === novedad.id_novedad)
-                      .nombre
+                      .nombre_novedad
                   }
                 </span>
                 <span className="font-normal">{novedad.nombre}</span>
