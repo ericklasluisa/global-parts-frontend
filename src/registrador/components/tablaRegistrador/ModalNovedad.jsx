@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FaFileImage, FaTimes } from "react-icons/fa";
 import PropTypes from "prop-types";
+import imageCompression from "browser-image-compression";
 import { novedadApi } from "../../api/novedadApi";
 
 const initialFormState = [];
@@ -16,7 +17,6 @@ function ModalNovedad({
   setOpenModalNovedad,
   codigoContenedor,
 }) {
-  //TODO: IMAGEN NO SE RENDERIZA EN EL MODAL CUANDO SE RECARGA LA PÁGINA
   const [novedadesBD, setNovedadesBD] = useState([]);
   const [formState, setFormState] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
@@ -38,9 +38,9 @@ function ModalNovedad({
         novedadActual.forEach((novedad) => {
           if (novedad.foto_novedad) {
             previews[novedad.id_novedad] = novedad.foto_novedad;
-            setPreview(previews);
           }
         });
+        setPreview(previews);
       }
     } else {
       novedadDialogRef.current.close();
@@ -62,19 +62,40 @@ function ModalNovedad({
     }
   };
 
-  const handleFileChange = (id_novedad, foto_novedad) => {
-    if (foto_novedad && foto_novedad.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview((prev) => ({ ...prev, [id_novedad]: reader.result }));
-        const updatedFormState = formState.map((n) =>
-          n.id_novedad === id_novedad
-            ? { ...n, foto_novedad: reader.result }
-            : n
-        );
-        setFormState(updatedFormState);
-      };
-      reader.readAsDataURL(foto_novedad);
+  const handleFileChange = async (id_novedad, file) => {
+    if (file && file.type.startsWith("image/")) {
+      try {
+        console.log("Original file size:", file.size);
+        const options = {
+          maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        };
+
+        const compressedFile = await imageCompression(file, options);
+
+        console.log("Compressed file size:", compressedFile.size);
+
+        // Verifica que el tamaño comprimido no exceda los 64 KB
+        if (compressedFile.size > 53000) {
+          setErrors({ ...errors, novedades: true });
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview((prev) => ({ ...prev, [id_novedad]: reader.result }));
+          const updatedFormState = formState.map((n) =>
+            n.id_novedad === id_novedad
+              ? { ...n, foto_novedad: reader.result }
+              : n
+          );
+          setFormState(updatedFormState);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error compressing file:", error);
+      }
     }
 
     if (errors.novedades) {
@@ -161,52 +182,54 @@ function ModalNovedad({
             )}
           </fieldset>
 
-          {formState.map((novedad) => (
-            <div key={novedad.id_novedad} className="my-5">
-              <p className="font-bold">
-                Suba la imagen de la novedad:{" "}
-                <span className="font-medium">
-                  {" "}
-                  {
-                    novedadesBD.find((n) => n.id_novedad === novedad.id_novedad)
-                      .nombre_novedad
-                  }
-                </span>
-                <span className="font-normal">{novedad.nombre}</span>
-              </p>
-              <div className="flex items-center gap-4 mt-2 p-4 bg-gray-200 rounded-lg">
-                <div className="w-16 h-16 flex items-center justify-center bg-gray-300 rounded-md">
-                  {preview[novedad.id_novedad] ? (
-                    <img
-                      src={preview[novedad.id_novedad]}
-                      alt="Preview"
-                      className="w-full h-full object-cover rounded-md"
-                    />
-                  ) : (
-                    <FaFileImage className="text-gray-500 text-2xl" />
-                  )}
+          {novedadesBD.length > 0 &&
+            formState.map((novedad) => (
+              <div key={novedad.id_novedad} className="my-5">
+                <p className="font-bold">
+                  Suba la imagen de la novedad:{" "}
+                  <span className="font-medium">
+                    {" "}
+                    {
+                      novedadesBD.find(
+                        (n) => n.id_novedad === novedad.id_novedad
+                      ).nombre_novedad
+                    }
+                  </span>
+                  <span className="font-normal">{novedad.nombre}</span>
+                </p>
+                <div className="flex items-center gap-4 mt-2 p-4 bg-gray-200 rounded-lg">
+                  <div className="w-16 h-16 flex items-center justify-center bg-gray-300 rounded-md">
+                    {preview[novedad.id_novedad] ? (
+                      <img
+                        src={preview[novedad.id_novedad]}
+                        alt="Preview"
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                    ) : (
+                      <FaFileImage className="text-gray-500 text-2xl" />
+                    )}
+                  </div>
+                  <div className="flex-1 text-gray-500">Suba una imagen</div>
+                  <button
+                    type="button"
+                    onClick={() => handleFileButtonClick(novedad.id_novedad)}
+                    className="px-4 py-2 bg-gray-800 text-white rounded-md"
+                  >
+                    Buscar
+                  </button>
+                  <input
+                    type="file"
+                    id={`file${novedad.id_novedad}`}
+                    name={`file${novedad.id_novedad}`}
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) =>
+                      handleFileChange(novedad.id_novedad, e.target.files[0])
+                    }
+                  />
                 </div>
-                <div className="flex-1 text-gray-500">Suba una imagen</div>
-                <button
-                  type="button"
-                  onClick={() => handleFileButtonClick(novedad.id_novedad)}
-                  className="px-4 py-2 bg-gray-800 text-white rounded-md"
-                >
-                  Buscar
-                </button>
-                <input
-                  type="file"
-                  id={`file${novedad.id_novedad}`}
-                  name={`file${novedad.id_novedad}`}
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) =>
-                    handleFileChange(novedad.id_novedad, e.target.files[0])
-                  }
-                />
               </div>
-            </div>
-          ))}
+            ))}
 
           <div>
             <button
