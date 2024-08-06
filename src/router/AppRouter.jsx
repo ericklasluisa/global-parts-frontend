@@ -7,6 +7,7 @@ import FinalizarViaje from "../registrador/pages/FinalizarViaje";
 import FinalizarRuta from "../registrador/pages/FinalizarRuta";
 
 import TablaAdmin from "../components/TablaAdmin/TablaAdmin";
+import Dashboard from "../administrador/pages/Dashboard.jsx";
 import Notificaciones from "../components/TablaAdmin/Notificaciones";
 import Novedad from "../components/TablaAdmin/Novedad";
 
@@ -42,7 +43,7 @@ function AppRouter() {
     if (user?.rol === "administrador") {
       return (
         <Routes>
-          <Route path="/" element={<TablaAdmin />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/notificaciones" element={<Notificaciones />} />
           <Route path="/novedad" element={<Novedad />} />
         </Routes>

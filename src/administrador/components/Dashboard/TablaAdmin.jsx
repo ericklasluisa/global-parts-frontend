@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import MUIDataTable from "mui-datatables";
+import {porcentajesApi} from "../../api/porcentajesApi";
 
 const registros = [
   {
@@ -64,17 +65,17 @@ const registros = [
 ];
 
 const rutas = [
-  { id: 1, nombre: "A" },
-  { id: 2, nombre: "B" },
-  { id: 3, nombre: "C" },
-  { id: 4, nombre: "D" },
-  { id: 5, nombre: "E" },
-  { id: 6, nombre: "F" },
-  { id: 7, nombre: "G" },
-  { id: 8, nombre: "H" },
-  { id: 9, nombre: "I" },
-  { id: 10, nombre: "J" },
-  { id: 11, nombre: "K" },
+  { id: 1, nombre_ruta: "A" },
+  { id: 2, nombre_ruta: "B" },
+  { id: 3, nombre_ruta: "C" },
+  { id: 4, nombre_ruta: "D" },
+  { id: 5, nombre_ruta: "E" },
+  { id: 6, nombre_ruta: "F" },
+  { id: 7, nombre_ruta: "G" },
+  { id: 8, nombre_ruta: "H" },
+  { id: 9, nombre_ruta: "I" },
+  { id: 10, nombre_ruta: "J" },
+  { id: 11, nombre_ruta: "K" },
 ];
 
 const contenedores = [
@@ -117,7 +118,7 @@ const contenedores = [
   },
 ];
 
-function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
+export function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const anioActual = fechaActual.getFullYear();
@@ -172,8 +173,8 @@ function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
             Todos
           </option>
           {rutas.map((ruta) => (
-            <option key={ruta.id} value={ruta.nombre}>
-              Ruta {ruta.nombre}
+            <option key={ruta.id} value={ruta.nombre_ruta}>
+              Ruta {ruta.nombre_ruta}
             </option>
           ))}
         </select>
@@ -202,10 +203,16 @@ function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
   );
 }
 
-function Tabla({ mes, anio, ruta, contenedor }) {
+export function Tabla({ mes, anio, ruta, contenedor }) {
   const [dias, setDias] = useState([]);
+  const [reportes, setReportes] = useState([]);
+  //const [rutas, setRutas] = useState([]);
+  /*const [registros, setRegistros] = useState([]);
+  const [rutas, setRutas] = useState([]);
+  const [contenedores, setContenedores] = useState([]);*/
 
   useEffect(() => {
+    // Obtener los días del mes
     const numDias = new Date(anio, mes, 0).getDate();
     const diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
     const diasTemp = [];
@@ -214,7 +221,28 @@ function Tabla({ mes, anio, ruta, contenedor }) {
       diasTemp.push(diasSemana[indice]);
     }
     setDias(diasTemp);
+
+    // Etraer los reportes de la Api
+    porcentajesApi
+    .get(
+      `/reporte/${mes}?anio=${anio}`
+    )
+    .then((response) => {
+      setReportes(response.data);
+      
+      //setRutas(response.data.rutas);
+    });
+    //setRutas(reportes.rutas);
+
+    //setRegistros(reportes.map((ruta) => reporte.registros).flat());
+    //console.log(rutas);
+    //console.log(registros);
   }, [mes, anio]);
+
+  console.log(reportes);
+  console.log(rutas);
+  console.log(contenedores);
+  console.log(registros);
 
   const registrosFiltrados = registros
     .map((registro) => {
@@ -227,7 +255,7 @@ function Tabla({ mes, anio, ruta, contenedor }) {
     .filter(
       (registro) =>
         (contenedor === "" || registro.contenedor.toString() === contenedor) &&
-        (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre === ruta)
+        (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre_ruta === ruta)
     );
 
   const columns = [
@@ -246,7 +274,7 @@ function Tabla({ mes, anio, ruta, contenedor }) {
       name: `${index + 1}\n${dia}`,
       options: {
         customHeadRender: ({ i, ...column }) => (
-          <th key={index} {...column}>
+          <th key={i} {...column}>
             <div style={{ textAlign: 'center', fontWeight: 'normal' }}>
               <div>{index + 1}</div>
               <div>{dia}</div>
@@ -269,7 +297,7 @@ function Tabla({ mes, anio, ruta, contenedor }) {
   rutas.forEach((rutaMap) => {
     if (registrosFiltrados.some((registro) => registro.ruta === rutaMap.id)) {
       const rutaIndex = data.length;
-      data.push([`${rutaMap.nombre}`, "", "", "", ...Array(dias.length).fill(""), ""]);
+      data.push([`${rutaMap.nombre_ruta}`, "", "", "", ...Array(dias.length).fill(""), ""]);
       rutaRows.add(rutaIndex);
       
       registrosFiltrados
@@ -326,26 +354,5 @@ function Tabla({ mes, anio, ruta, contenedor }) {
       columns={columns}
       options={options}
     />
-  );
-}
-
-export default function TablaAdmin() {
-  const [mes, setMes] = useState(new Date().getMonth() + 1);
-  const [anio, setAnio] = useState(new Date().getFullYear());
-  const [ruta, setRuta] = useState("*");
-  const [contenedor, setContenedor] = useState("");
-
-  return (
-    <div className="w-11/12 mx-auto mb-4">
-      <Filtro
-        mes={mes}
-        anio={anio}
-        setMes={setMes}
-        setAnio={setAnio}
-        setRuta={setRuta}
-        setContenedor={setContenedor}
-      />
-      <Tabla mes={mes} anio={anio} ruta={ruta} contenedor={contenedor} />
-    </div>
   );
 }
