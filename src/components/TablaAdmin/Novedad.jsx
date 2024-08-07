@@ -1,7 +1,8 @@
 import { FaPlus } from 'react-icons/fa';
 import MUIDataTable from "mui-datatables";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material';
+import ModalImagenesNovedad from './ModalImagenesNovedad';
 
 //Novedades
 const novedadContenedor = {
@@ -29,6 +30,8 @@ export default function Novedad() {
     const [repuestos, setRepuestos] = useState([]);
     const [selectedRepuesto, setSelectedRepuesto] = useState('');
     const [cantidad, setCantidad] = useState('');
+    const [openModal, setOpenModal] = useState(false);
+    const modalRef = useRef(null);
 
     const options = {
         elevation: 0,
@@ -82,16 +85,27 @@ export default function Novedad() {
 
     return (
         <div className="flex-1 w-3/4 mx-auto py-4 max-lg:w-10/12">
-            <h1 className="font-bold text-2xl mb-5">Contenedor {novedadContenedor.contenedor.toString().padStart(2, "0")}</h1>
+            <h1 className="font-bold text-4xl mb-5">Solución</h1>
+            <h3 className="font-bold text-2xl mb-5">Contenedor {novedadContenedor.contenedor.toString().padStart(2, "0")}</h3>
             <form className="flex flex-col">
 
                 <div className="flex flex-col">
-                    <label
-                        htmlFor="novedad"
-                        className="text-global-principal/80 font-semibold text-lg"
-                    >
-                        Novedades:
-                    </label>
+                    <div className="flex items-center">
+                        <label
+                            htmlFor="novedad"
+                            className="text-global-principal/80 font-semibold text-lg"
+                        >
+                            Novedades:
+                        </label>
+
+                        <button
+                            className="bg-global-principal/90 text-white text-lg rounded-lg py-2 px-2 hover:bg-[#1A365D] active:bg-[#1A365D] ml-auto"
+                            type="button"
+                            onClick={() => modalRef.current.open()}
+                        >
+                            Imagenes
+                        </button>
+                    </div>
                     <div className="flex max-lg:flex-col gap-x-3">
                         {novedadContenedor.novedades.map((novedad) => (
                             <input
@@ -192,6 +206,11 @@ export default function Novedad() {
                     Actualizar
                 </button>
             </form>
+            <ModalImagenesNovedad
+                ref={modalRef}
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+            />
         </div>
     );
 }

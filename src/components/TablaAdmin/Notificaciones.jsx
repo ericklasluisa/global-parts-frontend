@@ -2,6 +2,7 @@ import { GoAlertFill } from "react-icons/go";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import { GrStatusGood } from "react-icons/gr";
 import { useState } from "react";
+import Novedad from "./Novedad";
 
 const notificaciones = [
     { contenedor: 1, mensaje: "El contenedor 1 ha sido recolectado", estado: "urgente", ruta: "A" },
@@ -27,7 +28,7 @@ function Notificacion({ contenedor, mensaje, estado }) {
     return (
         <div className="p-4 my-4 flex border-2 rounded-xl border-gray-500">
             <section>
-                <h1 className="font-bold">Contenedor {contenedor.toString().padStart(2, "0")}</h1>
+                <h1 className="font-bold">Contenedor {contenedor.toString().padStart(2, "0")} - Ruta</h1>
                 <p className="text-gray-500 text-xs mt-3">{mensaje}</p>
             </section>
             <section className={`my-auto ml-auto w-1/3 flex flex-col ${estado === "urgente" ? 'text-red-600' : estado === "pendiente" ? 'text-yellow-300' : 'text-green-500'}`}>
@@ -103,7 +104,7 @@ export default function Notificaciones() {
     const [ruta, setRuta] = useState("*");
     const [contenedor, setContenedor] = useState(0);
     const [paginaActual, setPaginaActual] = useState(1);
-    const notificacionesPorPagina = 10;
+    const notificacionesPorPagina = 5;
 
     const notificacionesFiltradas = notificaciones.filter(
         (notificacion) =>
@@ -121,25 +122,26 @@ export default function Notificaciones() {
     const cambiarPagina = (numeroPagina) => setPaginaActual(numeroPagina);
 
     return (
-        <div className="flex flex-col flex-1 p-5 h-0">
+        <div className="flex flex-col flex-1 p-5">
             <h1 className="font-bold text-2xl mb-5">Notificaciones</h1>
-            <div className="flex flex-1 max-lg:flex-col h-0">
-                <Filtro setEstado={setEstado} setRuta={setRuta} setContenedor={setContenedor} setPaginaActual={setPaginaActual} />
-                <div className="flex flex-col flex-1 h-0">
-                    <div className="flex flex-col flex-1 md:h-[500px] h-0">
-                        <section className="overflow-y-auto h-0 flex-1">
-                            {notificacionesPagina.map((notificacion, index) => (
-                                <Notificacion key={index} contenedor={notificacion.contenedor} mensaje={notificacion.mensaje} estado={notificacion.estado} />
-                            ))}
-                        </section>
-                        <div className="flex flex-wrap justify-center mt-4">
-                            {Array.from({ length: totalPaginas }, (_, i) => (
-                                <button key={i} className={`px-3 py-1 m-1 rounded ${paginaActual === i + 1 ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'}`} onClick={() => cambiarPagina(i + 1)}>
-                                    {i + 1}
-                                </button>
-                            ))}
-                        </div>
+            <div className="flex flex-col md:flex-row flex-1">
+                <div className="flex-col flex-1 md:h-auto h-full">
+                    <Filtro setEstado={setEstado} setRuta={setRuta} setContenedor={setContenedor} setPaginaActual={setPaginaActual} />
+                    <section className="overflow-y-auto flex-1">
+                        {notificacionesPagina.map((notificacion, index) => (
+                            <Notificacion key={index} contenedor={notificacion.contenedor} mensaje={notificacion.mensaje} estado={notificacion.estado} />
+                        ))}
+                    </section>
+                    <div className="flex flex-wrap justify-center mt-4">
+                        {Array.from({ length: totalPaginas }, (_, i) => (
+                            <button key={i} className={`px-3 py-1 m-1 rounded ${paginaActual === i + 1 ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-800'}`} onClick={() => cambiarPagina(i + 1)}>
+                                {i + 1}
+                            </button>
+                        ))}
                     </div>
+                </div>
+                <div className="flex flex-col flex-1 md:h-auto h-full overflow-y-auto mt-4 md:mt-0 md:ml-4 justify-center text-center">
+                    <p className="font-bold">Ninguna novedad seleccionada</p>
                 </div>
             </div>
         </div>
