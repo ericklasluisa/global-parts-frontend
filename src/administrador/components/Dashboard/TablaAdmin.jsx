@@ -1,125 +1,28 @@
 import { useState, useEffect } from "react";
-import { FaFilter } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
 
-const registros = [
-  {
-    ruta: 1,
-    contenedor: 1,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-      { dia: "04/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 1,
-    contenedor: 2,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 2,
-    contenedor: 3,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 2,
-    contenedor: 4,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 5,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 6,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 7,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-];
+import { porcentajesApi } from "../../api/porcentajesApi";
+import { rutasApi } from "../../api/rutasApi";
 
-const rutas = [
-  { id: 1, nombre: "A" },
-  { id: 2, nombre: "B" },
-  { id: 3, nombre: "C" },
-  { id: 4, nombre: "D" },
-  { id: 5, nombre: "E" },
-  { id: 6, nombre: "F" },
-  { id: 7, nombre: "G" },
-  { id: 8, nombre: "H" },
-  { id: 9, nombre: "I" },
-  { id: 10, nombre: "J" },
-  { id: 11, nombre: "K" },
-];
+import { FaFilter, FaSearch } from "react-icons/fa";
+import { MdFileDownload } from "react-icons/md";
 
-const contenedores = [
-  {
-    id: 1,
-    principal: "Toronto",
-    transversal: "Matanzas",
-    sector: "La Peninsula",
-  },
-  { id: 2, principal: "Toronto", transversal: "Otawa", sector: "La Peninsula" },
-  {
-    id: 3,
-    principal: "Gustavo Lemos Ramirez, Escuela",
-    transversal: "Dr. Pedro José Arteta",
-    sector: "Magdalena",
-  },
-  {
-    id: 4,
-    principal: "Gustavo Lemos Ramirez, Escuela",
-    transversal: "Dr. Pedro José Arteta",
-    sector: "Magdalena",
-  },
-  {
-    id: 5,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-  {
-    id: 6,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-  {
-    id: 7,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-];
+import {BotonExportarAdmin, DownloadAdminLoader} from "./Exportar";
 
-function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
+export function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const anioActual = fechaActual.getFullYear();
+  const [rutas, setRutas] = useState([]);
+
+  const getRutas = async () => {
+    rutasApi.get("/rutas/").then((response) => {
+      setRutas(response.data);
+    });
+  }
+
+  useEffect(() => {
+    getRutas();
+  },[]);
 
   const cambioFecha = (e) => {
     const [year, month] = e.target.value.split("-");
@@ -171,40 +74,91 @@ function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
             Todos
           </option>
           {rutas.map((ruta) => (
-            <option key={ruta.id} value={ruta.nombre}>
-              Ruta {ruta.nombre}
+            <option key={ruta.id_ruta} value={ruta.nombre_ruta}>
+              Ruta {ruta.nombre_ruta}
             </option>
           ))}
         </select>
       </div>
-      <div className="flex shadow-sm bg-global-principal mb-4 mt-0 rounded-full border-gray-200 border w-1/4 max-lg:w-3/4 hover:bg-[#464769]">
-        <label
-          htmlFor="codigo"
-          className="px-4 py-4
+      <div className="flex">
+
+        <div className="flex shadow-sm bg-global-principal mb-4 mt-0 rounded-full border-gray-200 border w-1/4 max-lg:w-3/4 hover:bg-[#464769]">
+          <label
+            htmlFor="codigo"
+            className="px-4 py-4
               text-sm text-white font-medium
               rounded-s-full"
-        >
-          <FaSearch />
-        </label>
-        <input
-          name="codigo"
-          type="text"
-          placeholder="Buscar código contenedor"
-          className="px-4 py-3 bg-transparent flex-1 w-1/4
+          >
+            <FaSearch />
+          </label>
+          <input
+            name="codigo"
+            type="text"
+            placeholder="Buscar código contenedor"
+            className="px-4 py-3 bg-transparent flex-1 w-1/4
             text-sm text-white font-medium
             rounded-e-full
             focus:outline-none"
-          onChange={(e) => setContenedor(e.target.value)}
-        />
+            onChange={(e) => setContenedor(e.target.value)}
+          />
+        </div>
+
+        <BotonExportarAdmin mes={mes} anio={anio} />
       </div>
     </>
   );
 }
 
-function Tabla({ mes, anio, ruta, contenedor }) {
+export function Tabla({ mes, anio, ruta, contenedor }) {
   const [dias, setDias] = useState([]);
+  const [rutas, setRutas] = useState([]);
+  const [contenedores, setContenedores] = useState([]);
+  const [reportes, setReportes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getPorcentajes = async () => {
+    porcentajesApi
+      .get(`/reporte/${mes}/${anio}`)
+      .then((response) => {
+        const { rutas: rutasApi } = response.data;
+
+        // Procesar datos de la API
+        const contenedoresApi = [];
+        const registrosApi = [];
+
+        rutasApi.forEach((ruta) => {
+          ruta.contenedores.forEach((contenedor) => {
+            contenedoresApi.push({
+              id: contenedor.id_contenedor,
+              principal: contenedor.principal,
+              transversal: contenedor.transversal,
+              sector: contenedor.sector
+            });
+
+            registrosApi.push({
+              ruta: ruta.id_ruta,
+              contenedor: contenedor.id_contenedor,
+              porcentajes: contenedor.registros.map((registro) => ({
+                dia: registro.fecha_registro.split("T")[0], // Asumiendo que el formato es YYYY-MM-DD
+                porcentaje: registro.porcentaje
+              }))
+            });
+          });
+        });
+
+        setRutas(rutasApi.map(r => ({ id: r.id_ruta, nombre: r.nombre_ruta })));
+        setContenedores(contenedoresApi);
+        setReportes(registrosApi);
+        setLoading(false);
+      });
+  }
 
   useEffect(() => {
+    //Setear el loading
+    setReportes([]);
+    setLoading(true);
+
+    // Obtener fecha actual
     var numDias = new Date(anio, mes, 0).getDate();
     const diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
     var diasTemp = [];
@@ -213,14 +167,17 @@ function Tabla({ mes, anio, ruta, contenedor }) {
       diasTemp.push(diasSemana[indice]);
     }
     setDias(diasTemp);
+
+    // Obtener registros de la API
+    getPorcentajes();
   }, [mes, anio]);
 
   const numColumnas = 4 + dias.length + 2;
 
-  const registrosFiltrados = registros
+  const registrosFiltrados = reportes
     .map((registro) => {
       const porcentajesMes = registro.porcentajes.filter((p) => {
-        const [day, month, year] = p.dia.split("/");
+        const [year, month, day] = p.dia.split("-");
         return parseInt(month) === mes && parseInt(year) === anio;
       });
       return { ...registro, porcentajes: porcentajesMes };
@@ -232,7 +189,7 @@ function Tabla({ mes, anio, ruta, contenedor }) {
     );
 
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
+    <div className="flex flex-col overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
       <table className="w-auto text-sm text-gray-500">
         <thead className="text-xs text-gray-700 uppercase">
           <tr className="border-b border-gray-200 sticky top-0 z-10">
@@ -245,9 +202,8 @@ function Tabla({ mes, anio, ruta, contenedor }) {
             {dias.map((dia, index) => (
               <th
                 key={index}
-                className={`px-6 py-3 ${
-                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                }`}
+                className={`px-6 py-3 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
               >
                 {index + 1}
                 <br />
@@ -302,14 +258,13 @@ function Tabla({ mes, anio, ruta, contenedor }) {
                           const porcentajeDia =
                             registro.porcentajes.find(
                               (p) =>
-                                parseInt(p.dia.split("/")[0]) === index + 1
+                                parseInt(p.dia.split("-")[2]) === index + 1
                             )?.porcentaje || 0;
                           return (
                             <td
                               key={index}
-                              className={`px-6 py-3 ${
-                                index % 2 === 0 ? "bg-gray-50" : ""
-                              }`}
+                              className={`px-6 py-3 ${index % 2 === 0 ? "bg-gray-50" : ""
+                                }`}
                             >
                               {porcentajeDia}
                             </td>
@@ -326,32 +281,18 @@ function Tabla({ mes, anio, ruta, contenedor }) {
           )}
         </tbody>
       </table>
-    </div>
-  );
-}
-export default function TablaAdmin() {
-  const [mes, setMes] = useState([]);
-  const [anio, setAnio] = useState([]);
-  const [ruta, setRuta] = useState("*");
-  const [contenedor, setContenedor] = useState("");
-
-  useEffect(() => {
-    const fecha = new Date();
-    setMes(fecha.getMonth() + 1);
-    setAnio(fecha.getFullYear());
-  }, []);
-
-  return (
-    <div className="flex flex-col h-0 flex-1 w-11/12 mx-auto">
-      <Filtro
-        mes={mes}
-        anio={anio}
-        setMes={setMes}
-        setAnio={setAnio}
-        setRuta={setRuta}
-        setContenedor={setContenedor}
-      />
-      <Tabla mes={mes} anio={anio} ruta={ruta} contenedor={contenedor} />
+      {loading && (
+        <div className="flex flex-col gap-5 flex-1 justify-center items-center w-full">
+          <p className="text-xl text-gray-500">
+            Cargando Datos
+          </p>
+          <div className="flex flex-row gap-4">
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -25,6 +25,21 @@ const paginas = [
   },
 ];
 
+const paginasAdmin = [
+  {
+    text: "Tabla de Rutas",
+    path: "/",
+  },
+  {
+      text: "Notificaciones",
+      path: "/notificaciones",
+  },
+  {
+      text: "Novedad",
+      path: "/novedad",
+  },
+]
+
 function ListItem({ text, path, setIsOpen }) {
   return (
     <>
@@ -110,12 +125,36 @@ function NavMenu({ isOpen, setIsOpen }) {
               ))}
             </ul>
           )}
+          {user.rol === "administrador" && (
+            <ul className="flex flex-col gap-8 my-5 text-center">
+              {paginasAdmin.map((pagina) => (
+                <ListItem
+                  key={pagina.text}
+                  text={pagina.text}
+                  path={pagina.path}
+                  setIsOpen={setIsOpen}
+                />
+              ))}
+            </ul>
+          )}
         </div>
       </div>
       <div className="md:flex bg-global-principal h-full items-center pr-10 text-white hidden">
         {user.rol === "registrador" && (
           <ul className="flex gap-5 text-center mr-5">
             {paginas.map((pagina) => (
+              <ListItem
+                key={pagina.text}
+                text={pagina.text}
+                path={pagina.path}
+                setIsOpen={setIsOpen}
+              />
+            ))}
+          </ul>
+        )}
+        {user.rol === "administrador" && (
+          <ul className="flex gap-5 text-center mr-5">
+            {paginasAdmin.map((pagina) => (
               <ListItem
                 key={pagina.text}
                 text={pagina.text}

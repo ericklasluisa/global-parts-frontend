@@ -17,7 +17,9 @@ export default function Login() {
   }, [errorMessage]);
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
+    setAuth(true);
+      startLogin({ user: userInput, password: passwordValue });
     if (userIsValid && passwordIsValid) {
       setAuth(true);
       startLogin({ user: userInput, password: passwordValue });
