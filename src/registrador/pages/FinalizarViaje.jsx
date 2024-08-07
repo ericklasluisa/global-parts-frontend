@@ -5,6 +5,7 @@ import ModalFinalizarViaje from "../components/finalizarViaje/ModalFinalizarViaj
 import { useRegistradorStore } from "../hooks/useRegistradorStore";
 import { viajesApi } from "../api/viajesApi";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 
 const initialErrors = {
   numero_viaje: false,
@@ -146,17 +147,38 @@ function FinalizarViaje() {
     }
   };
 
-  const readImgTonelajeEntrada = (file) => {
+  const readImgTonelajeEntrada = async (file) => {
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImgTonelajeEntrada(reader.result);
-        setForm((prevState) => ({
-          ...prevState,
-          foto_entrada: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        console.log("Original file size:", file.size);
+        const options = {
+          maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        };
+
+        const compressedFile = await imageCompression(file, options);
+
+        console.log("Compressed file size:", compressedFile.size);
+
+        // Verifica que el tamaño comprimido no exceda los 64 KB
+        if (compressedFile.size > 53000) {
+          setErrors({ ...errors, novedades: true });
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImgTonelajeEntrada(reader.result);
+          setForm((prevState) => ({
+            ...prevState,
+            foto_entrada: reader.result,
+          }));
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error compressing file:", error);
+      }
     }
   };
 
@@ -172,17 +194,38 @@ function FinalizarViaje() {
     }
   };
 
-  const readImgTonelajeSalida = (file) => {
+  const readImgTonelajeSalida = async (file) => {
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImgTonelajeSalida(reader.result);
-        setForm((prevState) => ({
-          ...prevState,
-          foto_salida: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        console.log("Original file size:", file.size);
+        const options = {
+          maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        };
+
+        const compressedFile = await imageCompression(file, options);
+
+        console.log("Compressed file size:", compressedFile.size);
+
+        // Verifica que el tamaño comprimido no exceda los 64 KB
+        if (compressedFile.size > 53000) {
+          setErrors({ ...errors, novedades: true });
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImgTonelajeSalida(reader.result);
+          setForm((prevState) => ({
+            ...prevState,
+            foto_salida: reader.result,
+          }));
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error compressing file:", error);
+      }
     }
   };
 
