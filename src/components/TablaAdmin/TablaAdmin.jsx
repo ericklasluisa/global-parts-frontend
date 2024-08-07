@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { FaFilter } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import MUIDataTable from "mui-datatables";
 
 const registros = [
   {
     ruta: 1,
     contenedor: 1,
     porcentajes: [
-      { dia: "01/08/2024", porcentaje: 100 },
-      { dia: "02/08/2024", porcentaje: 40 },
+      { dia: "01/07/2024", porcentaje: 100 },
+      { dia: "02/07/2024", porcentaje: 40 },
       { dia: "04/07/2024", porcentaje: 40 },
     ],
   },
@@ -206,15 +205,17 @@ function Tabla({ mes, anio, ruta, contenedor }) {
   const [dias, setDias] = useState([]);
 
   useEffect(() => {
-    const numDias = new Date(anio, mes, 0).getDate();
+    var numDias = new Date(anio, mes, 0).getDate();
     const diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
-    const diasTemp = [];
+    var diasTemp = [];
     for (let i = 1; i <= numDias; i++) {
-      const indice = new Date(anio, mes - 1, i).getDay();
+      var indice = new Date(anio, mes - 1, i).getDay();
       diasTemp.push(diasSemana[indice]);
     }
     setDias(diasTemp);
   }, [mes, anio]);
+
+  const numColumnas = 4 + dias.length + 2;
 
   const registrosFiltrados = registros
     .map((registro) => {
@@ -230,113 +231,118 @@ function Tabla({ mes, anio, ruta, contenedor }) {
         (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre === ruta)
     );
 
-  const columns = [
-    {
-      name: "Cont",
-      options: {
-        setCellProps: () => ({
-          style: { position: "sticky", left: 0, backgroundColor: "#999" },
-        }),
-      },
-    },
-    { name: "Principal" },
-    { name: "Transversal" },
-    { name: "Sector" },
-    ...dias.map((dia, index) => ({
-      name: `${index + 1}\n${dia}`,
-      options: {
-        customHeadRender: ({ i, ...column }) => (
-          <th key={index} {...column}>
-            <div style={{ textAlign: 'center', fontWeight: 'normal' }}>
-              <div>{index + 1}</div>
-              <div>{dia}</div>
-            </div>
-          </th>
-        ),
-      },
-    })),
-    {
-      name: "Prom",
-      options: {
-        setCellProps: () => ({ style: { position: "sticky", right: 0, backgroundColor: "#999" } }),
-      },
-    },
-  ];
-
-  const data = [];
-  const rutaRows = new Set();
-
-  rutas.forEach((rutaMap) => {
-    if (registrosFiltrados.some((registro) => registro.ruta === rutaMap.id)) {
-      const rutaIndex = data.length;
-      data.push([`${rutaMap.nombre}`, "", "", "", ...Array(dias.length).fill(""), ""]);
-      rutaRows.add(rutaIndex);
-      
-      registrosFiltrados
-        .filter((registro) => registro.ruta === rutaMap.id)
-        .forEach((registro) => {
-          const contenedor = contenedores.find(
-            (c) => c.id === registro.contenedor
-          );
-          const promedioMes =
-            registro.porcentajes.reduce((acc, p) => acc + p.porcentaje, 0) /
-              registro.porcentajes.length || 0;
-
-          const row = [
-            registro.contenedor,
-            contenedor?.principal || "",
-            contenedor?.transversal || "",
-            contenedor?.sector || "",
-            ...dias.map((dia, index) => {
-              const porcentajeDia =
-                registro.porcentajes.find(
-                  (p) => parseInt(p.dia.split("/")[0]) === index + 1
-                )?.porcentaje || 0;
-              return porcentajeDia;
-            }),
-            promedioMes.toFixed(2),
-          ];
-
-          data.push(row);
-        });
-    }
-  });
-
-  const options = {
-    search: false,
-    filter: false,
-    viewColumns: false,
-    selectableRows: "none",
-    rowsPerPage: 10,
-    responsive: "standard",
-    setRowProps: (row, dataIndex) => {
-      if (rutaRows.has(dataIndex)) {
-        return {
-          style: { backgroundColor: "#999", fontWeight: "bold" },
-        };
-      }
-      return {};
-    },
-  };
-
   return (
-    <MUIDataTable
-      title={"Tabla de Datos"}
-      data={data}
-      columns={columns}
-      options={options}
-    />
+    <div className="overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
+      <table className="w-auto text-sm text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase">
+          <tr className="border-b border-gray-200 sticky top-0 z-10">
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0 z-20">
+              Cont
+            </th>
+            <th className="px-6 py-3 bg-white">Principal</th>
+            <th className="px-6 py-3 bg-gray-50">Transversal</th>
+            <th className="px-6 py-3 bg-white">Sector</th>
+            {dias.map((dia, index) => (
+              <th
+                key={index}
+                className={`px-6 py-3 ${
+                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                }`}
+              >
+                {index + 1}
+                <br />
+                {dia}
+              </th>
+            ))}
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky right-0 z-20">
+              Prom Mes
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rutas.map((rutaMap) =>
+            registrosFiltrados.some((registro) => registro.ruta === rutaMap.id) ? (
+              <>
+                <tr
+                  className="border-b border-gray-200 bg-gray-500"
+                  key={rutaMap.id}
+                >
+                  <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">
+                    {rutaMap.nombre}
+                  </td>
+                  <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
+                </tr>
+                {registrosFiltrados
+                  .filter((registro) => registro.ruta === rutaMap.id)
+                  .map((registro, i) => {
+                    const contenedor = contenedores.find(
+                      (c) => c.id === registro.contenedor
+                    );
+                    const promedioMes =
+                      registro.porcentajes.reduce(
+                        (acc, p) => acc + p.porcentaje,
+                        0
+                      ) / registro.porcentajes.length || 0;
+
+                    return (
+                      <tr key={i} className="border-b border-gray-200">
+                        <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">
+                          {registro.contenedor}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.principal}
+                        </td>
+                        <td className="px-6 py-3 bg-gray-50 truncate max-w-xs">
+                          {contenedor.transversal}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.sector}
+                        </td>
+                        {dias.map((dia, index) => {
+                          const porcentajeDia =
+                            registro.porcentajes.find(
+                              (p) =>
+                                parseInt(p.dia.split("/")[0]) === index + 1
+                            )?.porcentaje || 0;
+                          return (
+                            <td
+                              key={index}
+                              className={`px-6 py-3 ${
+                                index % 2 === 0 ? "bg-gray-50" : ""
+                              }`}
+                            >
+                              {porcentajeDia}
+                            </td>
+                          );
+                        })}
+                        <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">
+                          {promedioMes.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </>
+            ) : null
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
-
 export default function TablaAdmin() {
-  const [mes, setMes] = useState(new Date().getMonth() + 1);
-  const [anio, setAnio] = useState(new Date().getFullYear());
+  const [mes, setMes] = useState([]);
+  const [anio, setAnio] = useState([]);
   const [ruta, setRuta] = useState("*");
   const [contenedor, setContenedor] = useState("");
 
+  useEffect(() => {
+    const fecha = new Date();
+    setMes(fecha.getMonth() + 1);
+    setAnio(fecha.getFullYear());
+  }, []);
+
   return (
-    <div className="w-11/12 mx-auto mb-4">
+    <div className="flex flex-col h-0 flex-1 w-11/12 mx-auto">
       <Filtro
         mes={mes}
         anio={anio}

@@ -1,127 +1,28 @@
 import { useState, useEffect } from "react";
-import { FaFilter } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
-import MUIDataTable from "mui-datatables";
-import {porcentajesApi} from "../../api/porcentajesApi";
 
-const registros = [
-  {
-    ruta: 1,
-    contenedor: 1,
-    porcentajes: [
-      { dia: "01/08/2024", porcentaje: 100 },
-      { dia: "02/08/2024", porcentaje: 40 },
-      { dia: "04/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 1,
-    contenedor: 2,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 2,
-    contenedor: 3,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 2,
-    contenedor: 4,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 5,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 6,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-  {
-    ruta: 3,
-    contenedor: 7,
-    porcentajes: [
-      { dia: "01/07/2024", porcentaje: 100 },
-      { dia: "02/07/2024", porcentaje: 40 },
-    ],
-  },
-];
+import { porcentajesApi } from "../../api/porcentajesApi";
+import { rutasApi } from "../../api/rutasApi";
 
-const rutas = [
-  { id: 1, nombre_ruta: "A" },
-  { id: 2, nombre_ruta: "B" },
-  { id: 3, nombre_ruta: "C" },
-  { id: 4, nombre_ruta: "D" },
-  { id: 5, nombre_ruta: "E" },
-  { id: 6, nombre_ruta: "F" },
-  { id: 7, nombre_ruta: "G" },
-  { id: 8, nombre_ruta: "H" },
-  { id: 9, nombre_ruta: "I" },
-  { id: 10, nombre_ruta: "J" },
-  { id: 11, nombre_ruta: "K" },
-];
+import { FaFilter, FaSearch } from "react-icons/fa";
+import { MdFileDownload } from "react-icons/md";
 
-const contenedores = [
-  {
-    id: 1,
-    principal: "Toronto",
-    transversal: "Matanzas",
-    sector: "La Peninsula",
-  },
-  { id: 2, principal: "Toronto", transversal: "Otawa", sector: "La Peninsula" },
-  {
-    id: 3,
-    principal: "Gustavo Lemos Ramirez, Escuela",
-    transversal: "Dr. Pedro José Arteta",
-    sector: "Magdalena",
-  },
-  {
-    id: 4,
-    principal: "Gustavo Lemos Ramirez, Escuela",
-    transversal: "Dr. Pedro José Arteta",
-    sector: "Magdalena",
-  },
-  {
-    id: 5,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-  {
-    id: 6,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-  {
-    id: 7,
-    principal: "Av. Víctor Hugo",
-    transversal: "Batalla de Tarqui",
-    sector: "Cdla. El Deportista",
-  },
-];
+import {BotonExportarAdmin, DownloadAdminLoader} from "./Exportar";
 
 export function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
   const fechaActual = new Date();
   const mesActual = fechaActual.getMonth() + 1;
   const anioActual = fechaActual.getFullYear();
+  const [rutas, setRutas] = useState([]);
+
+  const getRutas = async () => {
+    rutasApi.get("/rutas/").then((response) => {
+      setRutas(response.data);
+    });
+  }
+
+  useEffect(() => {
+    getRutas();
+  },[]);
 
   const cambioFecha = (e) => {
     const [year, month] = e.target.value.split("-");
@@ -173,31 +74,36 @@ export function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
             Todos
           </option>
           {rutas.map((ruta) => (
-            <option key={ruta.id} value={ruta.nombre_ruta}>
+            <option key={ruta.id_ruta} value={ruta.nombre_ruta}>
               Ruta {ruta.nombre_ruta}
             </option>
           ))}
         </select>
       </div>
-      <div className="flex shadow-sm bg-global-principal mb-4 mt-0 rounded-full border-gray-200 border w-1/4 max-lg:w-3/4 hover:bg-[#464769]">
-        <label
-          htmlFor="codigo"
-          className="px-4 py-4
+      <div className="flex">
+
+        <div className="flex shadow-sm bg-global-principal mb-4 mt-0 rounded-full border-gray-200 border w-1/4 max-lg:w-3/4 hover:bg-[#464769]">
+          <label
+            htmlFor="codigo"
+            className="px-4 py-4
               text-sm text-white font-medium
               rounded-s-full"
-        >
-          <FaSearch />
-        </label>
-        <input
-          name="codigo"
-          type="text"
-          placeholder="Buscar código contenedor"
-          className="px-4 py-3 bg-transparent flex-1 w-1/4
+          >
+            <FaSearch />
+          </label>
+          <input
+            name="codigo"
+            type="text"
+            placeholder="Buscar código contenedor"
+            className="px-4 py-3 bg-transparent flex-1 w-1/4
             text-sm text-white font-medium
             rounded-e-full
             focus:outline-none"
-          onChange={(e) => setContenedor(e.target.value)}
-        />
+            onChange={(e) => setContenedor(e.target.value)}
+          />
+        </div>
+
+        <BotonExportarAdmin mes={mes} anio={anio} />
       </div>
     </>
   );
@@ -205,49 +111,73 @@ export function Filtro({ mes, anio, setMes, setAnio, setRuta, setContenedor }) {
 
 export function Tabla({ mes, anio, ruta, contenedor }) {
   const [dias, setDias] = useState([]);
-  const [reportes, setReportes] = useState([]);
-  //const [rutas, setRutas] = useState([]);
-  /*const [registros, setRegistros] = useState([]);
   const [rutas, setRutas] = useState([]);
-  const [contenedores, setContenedores] = useState([]);*/
+  const [contenedores, setContenedores] = useState([]);
+  const [reportes, setReportes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getPorcentajes = async () => {
+    porcentajesApi
+      .get(`/reporte/${mes}/${anio}`)
+      .then((response) => {
+        const { rutas: rutasApi } = response.data;
+
+        // Procesar datos de la API
+        const contenedoresApi = [];
+        const registrosApi = [];
+
+        rutasApi.forEach((ruta) => {
+          ruta.contenedores.forEach((contenedor) => {
+            contenedoresApi.push({
+              id: contenedor.id_contenedor,
+              principal: contenedor.principal,
+              transversal: contenedor.transversal,
+              sector: contenedor.sector
+            });
+
+            registrosApi.push({
+              ruta: ruta.id_ruta,
+              contenedor: contenedor.id_contenedor,
+              porcentajes: contenedor.registros.map((registro) => ({
+                dia: registro.fecha_registro.split("T")[0], // Asumiendo que el formato es YYYY-MM-DD
+                porcentaje: registro.porcentaje
+              }))
+            });
+          });
+        });
+
+        setRutas(rutasApi.map(r => ({ id: r.id_ruta, nombre: r.nombre_ruta })));
+        setContenedores(contenedoresApi);
+        setReportes(registrosApi);
+        setLoading(false);
+      });
+  }
 
   useEffect(() => {
-    // Obtener los días del mes
-    const numDias = new Date(anio, mes, 0).getDate();
+    //Setear el loading
+    setReportes([]);
+    setLoading(true);
+
+    // Obtener fecha actual
+    var numDias = new Date(anio, mes, 0).getDate();
     const diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
-    const diasTemp = [];
+    var diasTemp = [];
     for (let i = 1; i <= numDias; i++) {
-      const indice = new Date(anio, mes - 1, i).getDay();
+      var indice = new Date(anio, mes - 1, i).getDay();
       diasTemp.push(diasSemana[indice]);
     }
     setDias(diasTemp);
 
-    // Etraer los reportes de la Api
-    porcentajesApi
-    .get(
-      `/reporte/${mes}?anio=${anio}`
-    )
-    .then((response) => {
-      setReportes(response.data);
-      
-      //setRutas(response.data.rutas);
-    });
-    //setRutas(reportes.rutas);
-
-    //setRegistros(reportes.map((ruta) => reporte.registros).flat());
-    //console.log(rutas);
-    //console.log(registros);
+    // Obtener registros de la API
+    getPorcentajes();
   }, [mes, anio]);
 
-  console.log(reportes);
-  console.log(rutas);
-  console.log(contenedores);
-  console.log(registros);
+  const numColumnas = 4 + dias.length + 2;
 
-  const registrosFiltrados = registros
+  const registrosFiltrados = reportes
     .map((registro) => {
       const porcentajesMes = registro.porcentajes.filter((p) => {
-        const [day, month, year] = p.dia.split("/");
+        const [year, month, day] = p.dia.split("-");
         return parseInt(month) === mes && parseInt(year) === anio;
       });
       return { ...registro, porcentajes: porcentajesMes };
@@ -255,104 +185,114 @@ export function Tabla({ mes, anio, ruta, contenedor }) {
     .filter(
       (registro) =>
         (contenedor === "" || registro.contenedor.toString() === contenedor) &&
-        (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre_ruta === ruta)
+        (ruta === "*" || rutas.find((r) => r.id === registro.ruta)?.nombre === ruta)
     );
 
-  const columns = [
-    {
-      name: "Cont",
-      options: {
-        setCellProps: () => ({
-          style: { position: "sticky", left: 0, backgroundColor: "#999" },
-        }),
-      },
-    },
-    { name: "Principal" },
-    { name: "Transversal" },
-    { name: "Sector" },
-    ...dias.map((dia, index) => ({
-      name: `${index + 1}\n${dia}`,
-      options: {
-        customHeadRender: ({ i, ...column }) => (
-          <th key={i} {...column}>
-            <div style={{ textAlign: 'center', fontWeight: 'normal' }}>
-              <div>{index + 1}</div>
-              <div>{dia}</div>
-            </div>
-          </th>
-        ),
-      },
-    })),
-    {
-      name: "Prom",
-      options: {
-        setCellProps: () => ({ style: { position: "sticky", right: 0, backgroundColor: "#999" } }),
-      },
-    },
-  ];
-
-  const data = [];
-  const rutaRows = new Set();
-
-  rutas.forEach((rutaMap) => {
-    if (registrosFiltrados.some((registro) => registro.ruta === rutaMap.id)) {
-      const rutaIndex = data.length;
-      data.push([`${rutaMap.nombre_ruta}`, "", "", "", ...Array(dias.length).fill(""), ""]);
-      rutaRows.add(rutaIndex);
-      
-      registrosFiltrados
-        .filter((registro) => registro.ruta === rutaMap.id)
-        .forEach((registro) => {
-          const contenedor = contenedores.find(
-            (c) => c.id === registro.contenedor
-          );
-          const promedioMes =
-            registro.porcentajes.reduce((acc, p) => acc + p.porcentaje, 0) /
-              registro.porcentajes.length || 0;
-
-          const row = [
-            registro.contenedor,
-            contenedor?.principal || "",
-            contenedor?.transversal || "",
-            contenedor?.sector || "",
-            ...dias.map((dia, index) => {
-              const porcentajeDia =
-                registro.porcentajes.find(
-                  (p) => parseInt(p.dia.split("/")[0]) === index + 1
-                )?.porcentaje || 0;
-              return porcentajeDia;
-            }),
-            promedioMes.toFixed(2),
-          ];
-
-          data.push(row);
-        });
-    }
-  });
-
-  const options = {
-    search: false,
-    filter: false,
-    viewColumns: false,
-    selectableRows: "none",
-    rowsPerPage: 10,
-    responsive: "standard",
-    setRowProps: (row, dataIndex) => {
-      if (rutaRows.has(dataIndex)) {
-        return {
-          style: { backgroundColor: "#999", fontWeight: "bold" },
-        };
-      }
-      return {};
-    },
-  };
-
   return (
-    <MUIDataTable
-      title={"Tabla de Datos"}
-      data={data}
-      columns={columns}
-      options={options}
-    />
+    <div className="flex flex-col overflow-x-auto shadow-md rounded-lg w-full overflow-y-auto h-0 flex-1 mb-4">
+      <table className="w-auto text-sm text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase">
+          <tr className="border-b border-gray-200 sticky top-0 z-10">
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky left-0 z-20">
+              Cont
+            </th>
+            <th className="px-6 py-3 bg-white">Principal</th>
+            <th className="px-6 py-3 bg-gray-50">Transversal</th>
+            <th className="px-6 py-3 bg-white">Sector</th>
+            {dias.map((dia, index) => (
+              <th
+                key={index}
+                className={`px-6 py-3 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                  }`}
+              >
+                {index + 1}
+                <br />
+                {dia}
+              </th>
+            ))}
+            <th className="px-6 py-3 bg-gray-600 text-gray-100 sticky right-0 z-20">
+              Prom Mes
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rutas.map((rutaMap) =>
+            registrosFiltrados.some((registro) => registro.ruta === rutaMap.id) ? (
+              <>
+                <tr
+                  className="border-b border-gray-200 bg-gray-500"
+                  key={rutaMap.id}
+                >
+                  <td className="px-6 py-3 font-medium text-gray-100 text-left sticky left-0">
+                    {rutaMap.nombre}
+                  </td>
+                  <td colSpan={numColumnas - 1} className="px-6 py-3"></td>
+                </tr>
+                {registrosFiltrados
+                  .filter((registro) => registro.ruta === rutaMap.id)
+                  .map((registro, i) => {
+                    const contenedor = contenedores.find(
+                      (c) => c.id === registro.contenedor
+                    );
+                    const promedioMes =
+                      registro.porcentajes.reduce(
+                        (acc, p) => acc + p.porcentaje,
+                        0
+                      ) / registro.porcentajes.length || 0;
+
+                    return (
+                      <tr key={i} className="border-b border-gray-200">
+                        <td className="px-6 py-3 font-medium text-gray-100 whitespace-nowrap bg-gray-600 sticky left-0">
+                          {registro.contenedor}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.principal}
+                        </td>
+                        <td className="px-6 py-3 bg-gray-50 truncate max-w-xs">
+                          {contenedor.transversal}
+                        </td>
+                        <td className="px-6 py-3 truncate max-w-xs">
+                          {contenedor.sector}
+                        </td>
+                        {dias.map((dia, index) => {
+                          const porcentajeDia =
+                            registro.porcentajes.find(
+                              (p) =>
+                                parseInt(p.dia.split("-")[2]) === index + 1
+                            )?.porcentaje || 0;
+                          return (
+                            <td
+                              key={index}
+                              className={`px-6 py-3 ${index % 2 === 0 ? "bg-gray-50" : ""
+                                }`}
+                            >
+                              {porcentajeDia}
+                            </td>
+                          );
+                        })}
+                        <td className="px-6 py-3 font-medium text-gray-100 bg-gray-600 sticky right-0">
+                          {promedioMes.toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </>
+            ) : null
+          )}
+        </tbody>
+      </table>
+      {loading && (
+        <div className="flex flex-col gap-5 flex-1 justify-center items-center w-full">
+          <p className="text-xl text-gray-500">
+            Cargando Datos
+          </p>
+          <div className="flex flex-row gap-4">
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.3s]"></div>
+            <div className="w-7 h-7 rounded-full bg-blue-700 animate-bounce [animation-delay:.7s]"></div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
