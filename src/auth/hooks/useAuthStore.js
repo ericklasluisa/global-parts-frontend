@@ -26,7 +26,7 @@ export const useAuthStore = () => {
         })
       );
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       dispatch(onLogout("Credenciales incorrectas"));
     }
   };

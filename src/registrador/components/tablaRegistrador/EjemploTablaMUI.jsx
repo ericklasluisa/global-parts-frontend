@@ -1,11 +1,13 @@
 import MUIDataTable from "mui-datatables";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalRegistrarContenedor from "./ModalRegistrarContenedor";
 import { useRegistradorStore } from "../../hooks/useRegistradorStore";
 import { iniciarRutaApi } from "../../api/iniciarRutaApi";
 
 function EjemploTablaMUI() {
   const [contenedores, setContenedores] = useState([]);
+  const [data, setData] = useState([]);
+  const [filtro, setFiltro] = useState("todos");
   const [openModalRegistrar, setOpenModalRegistrar] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
@@ -20,15 +22,37 @@ function EjemploTablaMUI() {
       )
       .then((response) => {
         setContenedores(response.data);
+        setData(response.data);
       });
   }, [id_recoleccion, id_viaje]);
 
-  const handleUpdate = (index, updatedData) => {
+  const filtrarContenedores = useCallback(() => {
+    if (filtro === "todos") {
+      setData(contenedores);
+    } else if (filtro === "pendientes") {
+      setData(contenedores.filter((contenedor) => !contenedor.hora_registro));
+    } else if (filtro === "recolectados") {
+      setData(contenedores.filter((contenedor) => contenedor.hora_registro));
+    }
+  }, [contenedores, filtro]);
+
+  useEffect(() => {
+    filtrarContenedores();
+  }, [filtro, filtrarContenedores]);
+
+  const handleFiltroTodos = () => setFiltro("todos");
+  const handleFiltroPendientes = () => setFiltro("pendientes");
+  const handleFiltroRecolectados = () => setFiltro("recolectados");
+
+  const handleUpdate = (contenedor_id, updatedData) => {
     setContenedores((prevData) =>
-      prevData.map((item, i) =>
-        i === index ? { ...item, ...updatedData } : item
+      prevData.map((item) =>
+        item.id_contenedor === contenedor_id
+          ? { ...item, ...updatedData }
+          : item
       )
     );
+    setSelectedRowIndex(null);
   };
 
   const options = {
@@ -81,7 +105,6 @@ function EjemploTablaMUI() {
     },
   };
 
-  const data = contenedores;
   const columns = [
     {
       name: "id_contenedor",
@@ -125,6 +148,60 @@ function EjemploTablaMUI() {
 
   return (
     <>
+      <div className="flex my-5 gap-2">
+        <button
+          className={`flex flex-col ${
+            filtro === "todos"
+              ? "bg-global-principal text-white"
+              : "border-gray-500 border-2 text-global-principal/50"
+          } rounded-xl px-2 py-3 flex-1`}
+          onClick={handleFiltroTodos}
+        >
+          <p className="font-extrabold text-sm">Todos</p>
+          <p className="text-xs">
+            <span className="font-bold">{contenedores.length}</span> en Total
+          </p>
+        </button>
+        <button
+          className={`flex flex-col ${
+            filtro === "pendientes"
+              ? "bg-global-principal text-white"
+              : "border-gray-500 border-2 text-global-principal/50"
+          } rounded-xl px-2 py-3 flex-1`}
+          onClick={handleFiltroPendientes}
+        >
+          <p className="text-sm">Pendientes</p>
+          <p className="text-xs">
+            <span className="font-bold">
+              {
+                contenedores.filter((contenedor) => !contenedor.hora_registro)
+                  .length
+              }
+            </span>{" "}
+            en Total
+          </p>
+        </button>
+        <button
+          className={`flex flex-col ${
+            filtro === "recolectados"
+              ? "bg-global-principal text-white"
+              : "border-gray-500 border-2 text-global-principal/50"
+          } rounded-xl px-2 py-3 flex-1`}
+          onClick={handleFiltroRecolectados}
+        >
+          <p className="text-sm">Recolectados</p>
+          <p className="text-xs">
+            <span className="font-bold">
+              {
+                contenedores.filter((contenedor) => contenedor.hora_registro)
+                  .length
+              }
+            </span>{" "}
+            en Total
+          </p>
+        </button>
+      </div>
+
       <MUIDataTable
         title={"Contenedores"}
         data={data}
@@ -133,13 +210,13 @@ function EjemploTablaMUI() {
       />
       {selectedRowIndex !== null && (
         <ModalRegistrarContenedor
-          codigo={contenedores[selectedRowIndex].id_contenedor}
-          principal={contenedores[selectedRowIndex].principal}
-          transversal={contenedores[selectedRowIndex].transversal}
-          sector={contenedores[selectedRowIndex].sector}
-          hora={contenedores[selectedRowIndex].hora_registro}
-          porcentaje={contenedores[selectedRowIndex].porcentaje}
-          novedad={contenedores[selectedRowIndex].novedades}
+          codigo={data[selectedRowIndex].id_contenedor}
+          principal={data[selectedRowIndex].principal}
+          transversal={data[selectedRowIndex].transversal}
+          sector={data[selectedRowIndex].sector}
+          hora={data[selectedRowIndex].hora_registro}
+          porcentaje={data[selectedRowIndex].porcentaje}
+          novedad={data[selectedRowIndex].novedades}
           openModalRegistrar={openModalRegistrar}
           setOpenModalRegistrar={setOpenModalRegistrar}
           onUpdate={handleUpdate}

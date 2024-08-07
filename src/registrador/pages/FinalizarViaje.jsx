@@ -46,7 +46,7 @@ function FinalizarViaje() {
         const { data } = await viajesApi.get(`/recoleccion/${id_recoleccion}`);
         setViajes(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
     obtenerViajes();
@@ -150,7 +150,6 @@ function FinalizarViaje() {
   const readImgTonelajeEntrada = async (file) => {
     if (file && file.type.startsWith("image/")) {
       try {
-        console.log("Original file size:", file.size);
         const options = {
           maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
           maxWidthOrHeight: 1024,
@@ -158,8 +157,6 @@ function FinalizarViaje() {
         };
 
         const compressedFile = await imageCompression(file, options);
-
-        console.log("Compressed file size:", compressedFile.size);
 
         // Verifica que el tamaño comprimido no exceda los 64 KB
         if (compressedFile.size > 53000) {
@@ -197,7 +194,6 @@ function FinalizarViaje() {
   const readImgTonelajeSalida = async (file) => {
     if (file && file.type.startsWith("image/")) {
       try {
-        console.log("Original file size:", file.size);
         const options = {
           maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
           maxWidthOrHeight: 1024,
@@ -205,8 +201,6 @@ function FinalizarViaje() {
         };
 
         const compressedFile = await imageCompression(file, options);
-
-        console.log("Compressed file size:", compressedFile.size);
 
         // Verifica que el tamaño comprimido no exceda los 64 KB
         if (compressedFile.size > 53000) {

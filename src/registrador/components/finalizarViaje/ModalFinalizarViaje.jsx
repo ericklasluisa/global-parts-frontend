@@ -31,7 +31,7 @@ function ModalFinalizarViaje({
   };
 
   const handleFinRuta = () => {
-    console.log(form);
+    console.error(form);
     // TODO: Implementar interacción con backend para registrar viaje
     setForm(initialForm);
     setOpenModalFinalizarViaje(false);

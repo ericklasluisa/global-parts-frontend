@@ -30,7 +30,7 @@ export const useRegistradorStore = () => {
       localStorage.setItem("recoleccion", JSON.stringify(data));
       navigate("/ruta");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -41,13 +41,12 @@ export const useRegistradorStore = () => {
           const { data } = await iniciarRutaApi.get(
             `/recoleccion_actual_usuario/${id_usuario}`
           );
-          console.log(data);
 
           dispatch(iniciarRecoleccion(data));
           localStorage.setItem("recoleccion", JSON.stringify(data));
           navigate("/ruta");
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       };
 
@@ -77,7 +76,7 @@ export const useRegistradorStore = () => {
         JSON.stringify(recoleccionActualizada)
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -93,7 +92,7 @@ export const useRegistradorStore = () => {
       localStorage.removeItem("recoleccion");
       navigate("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

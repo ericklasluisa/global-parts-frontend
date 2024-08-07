@@ -26,7 +26,6 @@ function ModalRegistrarContenedor({
   openModalRegistrar,
   setOpenModalRegistrar,
   onUpdate,
-  rowIndex,
 }) {
   const dialogRef = useRef(null);
   const [formState, setFormState] = useState(initialFormState);
@@ -90,7 +89,7 @@ function ModalRegistrarContenedor({
         novedades: formState.novedades,
       });
 
-      onUpdate(rowIndex, formState);
+      onUpdate(codigo, formState);
       setOpenModalRegistrar(false);
       setFormState(initialFormState);
     }

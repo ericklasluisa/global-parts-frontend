@@ -65,7 +65,6 @@ function ModalNovedad({
   const handleFileChange = async (id_novedad, file) => {
     if (file && file.type.startsWith("image/")) {
       try {
-        console.log("Original file size:", file.size);
         const options = {
           maxSizeMB: 0.03, // Puedes ajustar este valor para pruebas
           maxWidthOrHeight: 1024,
@@ -73,8 +72,6 @@ function ModalNovedad({
         };
 
         const compressedFile = await imageCompression(file, options);
-
-        console.log("Compressed file size:", compressedFile.size);
 
         // Verifica que el tamaño comprimido no exceda los 64 KB
         if (compressedFile.size > 53000) {
